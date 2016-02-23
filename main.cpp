@@ -26,7 +26,7 @@ int	main(int ac, char **av)
 
 	// La vague :
 	for (int y = 0; y < map.height; y++)
-		map.drop_water(map.width - 1, y, map.width * map.height);
+		map.drop_water(map.width - 1, y, map.width * map.height * 2);
 	std::thread t([&map]{
 		while (1)
 		{

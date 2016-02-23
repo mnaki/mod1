@@ -25,7 +25,7 @@ void	display(void)
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);
-  
+
 	for (int x = 0 ; x < 1000 ; x++)
 	{
   		for (int y = 0 ; y < 1000 ; y++)
@@ -76,5 +76,5 @@ void	display(void)
 	if (t2 != t1)
 		t1 = t2;
 	else
-		usleep(1000000);
+		usleep(1000000 / FPS);
 }

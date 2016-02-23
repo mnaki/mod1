@@ -32,30 +32,31 @@ void Map::apply_gravity(void)
 					{
 						this->data[x][y].water_level--;
 						neighbours.clear();
+						neighbours.push_back(&this->data[x][y]);
 						for (int i = 1; i <= 1; i++)
 						{
 							// int i = 1;
 							if (x < this->width - i)
 								neighbours.push_back(&this->data[x+i][y]);
-							if (y < this->height - i)
-								neighbours.push_back(&this->data[x][y+i]);
 							if (x >= i)
 								neighbours.push_back(&this->data[x-i][y]);
+							if (y < this->height - i)
+								neighbours.push_back(&this->data[x][y+i]);
 							if (y >= i)
 								neighbours.push_back(&this->data[x][y-i]);
 
 							// diagonales
+							// a voir
 
-							if (x < this->width - i && y < this->height - i)
-								neighbours.push_back(&this->data[x+i][y+i]);
-							if (x >= i && y < this->height - i)
-								neighbours.push_back(&this->data[x-i][y+i]);
-							if (y >= i && x < this->width - i)
-								neighbours.push_back(&this->data[x+i][y-i]);
-							if (x >= i && y >= i)
-								neighbours.push_back(&this->data[x-i][y-i]);
+							// if (x < this->width - i && y < this->height - i)
+							// 	neighbours.push_back(&this->data[x+i][y+i]);
+							// if (x >= i && y < this->height - i)
+							// 	neighbours.push_back(&this->data[x-i][y+i]);
+							// if (x >= i && y >= i)
+							// 	neighbours.push_back(&this->data[x-i][y-i]);
+							// if (y >= i && x < this->width - i)
+							// 	neighbours.push_back(&this->data[x+i][y-i]);
 						}
-						neighbours.push_back(&this->data[x][y]);
 						MapPoint * map_point = neighbours[0];
 						for (MapPoint * n : neighbours)
 						{

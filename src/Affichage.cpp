@@ -15,6 +15,8 @@ void	reshape(int w, int h)
 void	display(void)
 {
 	static time_t	t1 = 0, t2 = 0;
+
+	// thread safe
 	mtx.lock();
 	if (q.size() < 1)
 	{
@@ -22,22 +24,11 @@ void	display(void)
 		return ;
 	}
 	mtx.unlock();
-
-	glClear(GL_COLOR_BUFFER_BIT);
-	glBegin(GL_POINTS);
-
-	for (int x = 0 ; x < 1000 ; x++)
-	{
-  		for (int y = 0 ; y < 1000 ; y++)
-		{
-			glColor3f(1.0, 1.0, 1.0);
-			glVertex2i(x, y);
-		}
-	}
-	glEnd();
+	// end thread safe
 
 	Map cmap = q.front();
 
+	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);
 	for (int x = 0 ; x < cmap.width ; x++)
 	{
@@ -55,26 +46,26 @@ void	display(void)
 				n = (n > 1) ? 1 : n;
 				glColor3f(n + 0.5, n + 0.5, 0);
 			}
-			glVertex2i(x*3,		y*3);
-			glVertex2i(x*3-1,	y*3);
-			glVertex2i(x*3-2,	y*3);
-			glVertex2i(x*3,		y*3-1);
-			glVertex2i(x*3-1,	y*3-1);
-			glVertex2i(x*3-2,	y*3-1);
-			glVertex2i(x*3,		y*3-2);
-			glVertex2i(x*3-1,	y*3-2);
-			glVertex2i(x*3-2,	y*3-2);
+			for (int i = 0 ; i < LARGEUR_PIXEL ; i++)
+			{
+				for (int j = 0 ; j < LONGEUR_PIXEL ; j++)
+				{
+					glVertex2i(x*LARGEUR_PIXEL + i, y*LONGEUR_PIXEL + j);
+				}
+			}
 		}
 	}
 	glEnd();
 	glFlush();  /* Single buffered, so needs a flush. */
+
 	mtx.lock();
 	q.pop();
 	mtx.unlock();
+
 	glutPostRedisplay();
-	t2 = time(NULL);
+	/*t2 = time(NULL);
 	if (t2 != t1)
 		t1 = t2;
 	else
-		usleep(1000000 / FPS);
+		usleep(1000000 / FPS);*/
 }

@@ -7,11 +7,10 @@ std::mutex mtx;
 
 int	main(int ac, char **av)
 {
+	// initiation du programe
 	glutInit(&ac, av);
-	glutInitWindowSize(W_Width, W_Height);
-	glutCreateWindow("single triangle");
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
+
+	// creation de la map
 	Map map(80, 60);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
@@ -21,6 +20,15 @@ int	main(int ac, char **av)
 	{
 		map.elevate_rect(map.width / 2 - 6, 0, map.width / 2 - 5, y, 100);
 	}
+
+	// creation de la fenetre en fonction de la map
+	int w = 0, h = 0;
+	w = (W_Width > map.width * LARGEUR_PIXEL) ? W_Width : map.width * LARGEUR_PIXEL;
+	h = (W_Height > map.height * LONGEUR_PIXEL) ? W_Height : map.height	* LONGEUR_PIXEL;
+	glutInitWindowSize(w, h);
+	glutCreateWindow("single triangle");
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
 	// map.drop_water(10, 10, 40000);
 	// map.drop_water(map.width / 2, map.height / 2, 400000);
 

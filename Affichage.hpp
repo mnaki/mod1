@@ -1,4 +1,4 @@
-#pragma one
+#pragma once
 
 #include "MapPoint.class.hpp"
 #include "Map.class.hpp"

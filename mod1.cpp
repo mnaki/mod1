@@ -74,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (8)
+# define MAX_THREAD_COUNT (100)
 # include <thread>
 
 void

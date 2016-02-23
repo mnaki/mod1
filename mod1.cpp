@@ -195,18 +195,18 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 }
 
 # define RENDER_AHEAD 3
-# define FPS 40
+# define FPS 30
 
 int
 main(int ac, char const *av[])
 {
 	std::queue<Map> q;
 	std::mutex mtx;
-	Map map(100, 40);
+	Map map(300, 100);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
-	map.viscosity = 0.8;
+	map.viscosity = 0;
 	std::cout << "started" << std::endl;
-	// map.elevate_rect(20, 0, 20 + 3, map.height, 85);
+	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
 	for (int y = 0; y < map.height - 4; y++)
 	{
 		map.elevate_rect(map.width / 2 - 6, 0, map.width / 2 - 5, y, 100);
@@ -216,7 +216,7 @@ main(int ac, char const *av[])
 
 	// La vague :
 	for (int y = 0; y < map.height; y++)
-		map.drop_water(map.width - 1, y, map.width * map.height / 2);
+		map.drop_water(map.width - 1, y, map.width * map.height * 50);
 	std::thread t([&q, &map, &mtx]{
 		while (1)
 		{

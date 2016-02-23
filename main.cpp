@@ -12,7 +12,7 @@ int	main(int ac, char **av)
 	glutCreateWindow("single triangle");
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
-	Map map(200, 50);
+	Map map(80, 60);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
@@ -26,7 +26,7 @@ int	main(int ac, char **av)
 
 	// La vague :
 	for (int y = 0; y < map.height; y++)
-		map.drop_water(map.width - 1, y, map.width * map.height * 2);
+		map.drop_water(map.width - 1, y, map.width * map.height);
 	std::thread t([&map]{
 		while (1)
 		{
@@ -34,6 +34,7 @@ int	main(int ac, char **av)
 			if (q.size() >= RENDER_AHEAD)
 			{
 				mtx.unlock();
+				usleep(10000);
 				continue ;
 			}
 			mtx.unlock();

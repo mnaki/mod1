@@ -170,7 +170,7 @@ Map::to_string(void) const
 			if (this->data[x][y].water_level > 35)
 				color = BLACK;
 			ss << color << "█";
-			// ss << color << this->data[x][y].water_level + this->data[x][y].terrain_height << " ";
+			// ss << color << this->data[x][y].water_level + this->data[x][y].terrain_height << "\t";
 		}
 		ss << std::endl;
 	}
@@ -191,8 +191,8 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	}
 }
 
-# define RENDER_AHEAD 10
-# define FPS 10
+# define RENDER_AHEAD 60
+# define FPS 30
 
 int
 main(int ac, char const *av[])
@@ -203,9 +203,13 @@ main(int ac, char const *av[])
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
-	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
-	map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60);
-	map.drop_water(map.width / 2, map.height / 2, 180000);
+	// map.elevate_rect(20, 0, 20 + 3, map.height, 85);
+	for (int y = 0; y < map.height - 4; y++)
+	{
+		map.elevate_rect(map.width / 2 - 6, 0, map.width / 2 - 5, y, 100);
+	}
+	// map.drop_water(10, 10, 40000);
+	// map.drop_water(map.width / 2, map.height / 2, 400000);
 	std::thread t([&q, &map, &mtx]{
 		while (1)
 		{
@@ -216,7 +220,7 @@ main(int ac, char const *av[])
 				continue ;
 			}
 			mtx.unlock();
-			// map.drop_water(0, 0, 1000);
+			map.drop_water(0, 0, 1000);
 			map.apply_gravity();
 			mtx.lock();
 			q.push(map);

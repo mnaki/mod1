@@ -12,8 +12,8 @@
 struct
 MapPoint
 {
-	std::atomic<int> terrain_height;
-	std::atomic<int> water_level;
+	std::atomic_int terrain_height;
+	std::atomic_int water_level;
 	MapPoint();
 	MapPoint(const MapPoint & rhs);
 	~MapPoint();
@@ -74,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (8)
+# define MAX_THREAD_COUNT (80)
 # include <thread>
 
 void
@@ -123,7 +123,7 @@ Map::apply_gravity(void)
 						MapPoint * map_point = neighbours[0];
 						for (MapPoint * n : neighbours)
 						{
-							if (n->terrain_height.load() + n->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
+							if (n->terrain_height + n->water_level < map_point->terrain_height + map_point->water_level)
 							{
 								map_point = n;
 							}
@@ -202,7 +202,7 @@ main(int ac, char const *av[])
 {
 	std::queue<Map> q;
 	std::mutex mtx;
-	Map map(300, 100);
+	Map map(200, 50);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
@@ -216,7 +216,7 @@ main(int ac, char const *av[])
 
 	// La vague :
 	for (int y = 0; y < map.height; y++)
-		map.drop_water(map.width - 1, y, map.width * map.height * 50);
+		map.drop_water(map.width - 1, y, map.width * map.height);
 	std::thread t([&q, &map, &mtx]{
 		while (1)
 		{
@@ -236,7 +236,7 @@ main(int ac, char const *av[])
 	});
 	while (1)
 	{
-		usleep(1000000 / FPS);
+		// usleep(1000000 / FPS);
 		mtx.lock();
 		if (q.size() < 1)
 		{
@@ -244,7 +244,7 @@ main(int ac, char const *av[])
 			continue ;
 		}
 		mtx.unlock();
-		system("clear");
+		// system("clear");
 		std::cout << std::endl << q.front().to_string() << std::endl;
 		mtx.lock();
 		q.pop();

@@ -74,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (16)
+# define MAX_THREAD_COUNT (8)
 # include <thread>
 
 void
@@ -96,7 +96,6 @@ Map::apply_gravity(void)
 					{
 						this->data[x][y].water_level--;
 						neighbours.clear();
-						neighbours.push_back(&this->data[x][y]);
 						for (int i = 1; i <= 1; i++)
 						{
 							// int i = 1;
@@ -111,15 +110,16 @@ Map::apply_gravity(void)
 
 							// diagonales
 
-							// if (x < this->width - i && y < this->height - i)
-							// 	neighbours.push_back(&this->data[x+i][y+i]);
-							// if (x >= i && y < this->height - i)
-							// 	neighbours.push_back(&this->data[x-i][y+i]);
-							// if (y >= i && x < this->width - i)
-							// 	neighbours.push_back(&this->data[x+i][y-i]);
-							// if (x >= i && y >= i)
-							// 	neighbours.push_back(&this->data[x-i][y-i]);
+							if (x < this->width - i && y < this->height - i)
+								neighbours.push_back(&this->data[x+i][y+i]);
+							if (x >= i && y < this->height - i)
+								neighbours.push_back(&this->data[x-i][y+i]);
+							if (y >= i && x < this->width - i)
+								neighbours.push_back(&this->data[x+i][y-i]);
+							if (x >= i && y >= i)
+								neighbours.push_back(&this->data[x-i][y-i]);
 						}
+						neighbours.push_back(&this->data[x][y]);
 						MapPoint * map_point = neighbours[0];
 						for (MapPoint * n : neighbours)
 						{
@@ -173,7 +173,7 @@ Map::to_string(void) const
 			if (this->data[x][y].water_level > 35)
 				color = BLACK;
 			ss << color << "█";
-			// ss << color << this->data[x][y].water_level + this->data[x][y].terrain_height << "\t";
+			// ss << color << this->data[x][y].water_level + this->data[x][y].terrain_height << " ";
 		}
 		ss << std::endl;
 	}
@@ -195,7 +195,7 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 }
 
 # define RENDER_AHEAD 3
-# define FPS 25
+# define FPS 40
 
 int
 main(int ac, char const *av[])
@@ -204,7 +204,7 @@ main(int ac, char const *av[])
 	std::mutex mtx;
 	Map map(100, 40);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
-	map.viscosity = 0;
+	map.viscosity = 0.8;
 	std::cout << "started" << std::endl;
 	// map.elevate_rect(20, 0, 20 + 3, map.height, 85);
 	for (int y = 0; y < map.height - 4; y++)
@@ -213,6 +213,10 @@ main(int ac, char const *av[])
 	}
 	// map.drop_water(10, 10, 40000);
 	// map.drop_water(map.width / 2, map.height / 2, 400000);
+
+	// La vague :
+	for (int y = 0; y < map.height; y++)
+		map.drop_water(map.width - 1, y, map.width * map.height / 2);
 	std::thread t([&q, &map, &mtx]{
 		while (1)
 		{
@@ -223,7 +227,7 @@ main(int ac, char const *av[])
 				continue ;
 			}
 			mtx.unlock();
-			map.drop_water(0, 0, 1000);
+			// map.drop_water(0, 0, 100);
 			map.apply_gravity();
 			mtx.lock();
 			q.push(map);

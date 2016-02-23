@@ -74,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (80)
+# define MAX_THREAD_COUNT (8)
 # include <thread>
 
 void
@@ -87,9 +87,9 @@ Map::apply_gravity(void)
 		threads[thread_id] = new std::thread([this, thread_id](){
 			std::vector<MapPoint*> neighbours;
 			neighbours.reserve(9);
-			for (int y = (double)thread_id * ((double)this->height / (double)MAX_THREAD_COUNT); (double)y < (double)((double)thread_id+1.0) * (double)((double)this->height / (double)MAX_THREAD_COUNT); y++)
+			for (int x = 0; x < this->width; x++)
 			{
-				for (int x = 0; x < this->width; x++)
+				for (int y = (double)thread_id * ((double)this->height / (double)MAX_THREAD_COUNT); (double)y < (double)((double)thread_id+1.0) * (double)((double)this->height / (double)MAX_THREAD_COUNT); y++)
 				{
 					// this->data[x][y].terrain_height = 10000000;
 					for (int l = 0; l < this->data[x][y].water_level * (1.0 - this->viscosity); l++)
@@ -185,9 +185,9 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 {
 	int width = x1 - x0;
 	int height = y1 - y0;
-	for (int y = 0; y < height; y++)
+	for (int x = 0; x < width; x++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int y = 0; y < height; y++)
 		{
 			this->data[x+x0][y+y0].terrain_height += value;
 		}

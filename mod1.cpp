@@ -74,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (1)
+# define MAX_THREAD_COUNT (8)
 # include <thread>
 
 void
@@ -191,7 +191,8 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	}
 }
 
-# define RENDER_AHEAD 10
+# define FPS 15
+# define RENDER_AHEAD 3
 
 int
 main(int ac, char const *av[])
@@ -224,6 +225,7 @@ main(int ac, char const *av[])
 	});
 	while (1)
 	{
+		sleep(1 / FPS);
 		mtx.lock();
 		if (q.size() < 1)
 		{
@@ -232,7 +234,7 @@ main(int ac, char const *av[])
 		}
 		mtx.unlock();
 		system("clear");
-		std::cout << std::endl << q.back().to_string() << std::endl;
+		std::cout << std::endl << q.front().to_string() << std::endl;
 		mtx.lock();
 		q.pop();
 		mtx.unlock();

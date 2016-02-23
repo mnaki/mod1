@@ -191,7 +191,8 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	}
 }
 
-# define RENDER_AHEAD 100
+# define RENDER_AHEAD 10
+# define FPS 10
 
 int
 main(int ac, char const *av[])
@@ -224,7 +225,7 @@ main(int ac, char const *av[])
 	});
 	while (1)
 	{
-		// sleep(1 / 3);
+		usleep(1000000 / FPS);
 		mtx.lock();
 		if (q.size() < 1)
 		{

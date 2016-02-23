@@ -191,8 +191,7 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	}
 }
 
-# define FPS 15
-# define RENDER_AHEAD 3
+# define RENDER_AHEAD 100
 
 int
 main(int ac, char const *av[])
@@ -205,7 +204,7 @@ main(int ac, char const *av[])
 	std::cout << "started" << std::endl;
 	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
 	map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60);
-	// map.drop_water(map.width / 2, map.height / 2, 180000);
+	map.drop_water(map.width / 2, map.height / 2, 180000);
 	std::thread t([&q, &map, &mtx]{
 		while (1)
 		{
@@ -216,7 +215,7 @@ main(int ac, char const *av[])
 				continue ;
 			}
 			mtx.unlock();
-			map.drop_water(0, 0, 1000);
+			// map.drop_water(0, 0, 1000);
 			map.apply_gravity();
 			mtx.lock();
 			q.push(map);
@@ -225,7 +224,7 @@ main(int ac, char const *av[])
 	});
 	while (1)
 	{
-		sleep(1 / FPS);
+		// sleep(1 / 3);
 		mtx.lock();
 		if (q.size() < 1)
 		{

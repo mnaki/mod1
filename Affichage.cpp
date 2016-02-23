@@ -39,9 +39,9 @@ void	display(void)
 	Map cmap = q.front();
 
 	glBegin(GL_POINTS);
-	for (int x = 0 ; x < cmap.width ; x = x + 2)
+	for (int x = 0 ; x < cmap.width ; x++)
 	{
-  		for (int y = 0 ; y < cmap.height ; y = y + 2)
+  		for (int y = 0 ; y < cmap.height ; y++)
 		{
 			if (cmap.data[x][y].water_level > 0)
 			{

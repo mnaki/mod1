@@ -108,7 +108,7 @@ Map::apply_gravity(void)
 	for (int thread_id = 0; thread_id < MAX_THREAD_COUNT; thread_id++)
 	{
 		threads[thread_id]->join();
-		// delete threads[thread_id];
+		delete threads[thread_id];
 	}
 	// delete [] threads;
 }
@@ -175,13 +175,13 @@ main(int ac, char const *av[])
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50, 5);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
-	map.elevate_rect(20, 0, 20 + 3, map.height, 85, 5);
+	// map.elevate_rect(20, 0, 20 + 3, map.height, 85, 5);
 	// map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60, 0);
 	map.drop_water(map.width / 2, map.height / 2, 30000);
 	std::thread t([&q, &map]{
 		while (1)
 		{
-			// map.drop_water(map.width / 2, map.height / 2, 100);
+			map.drop_water(map.width - 3, map.height - 3, 200);
 			map.apply_gravity();
 			q.push(map);
 		}
@@ -190,10 +190,11 @@ main(int ac, char const *av[])
 	{
 		if (q.size() > 0)
 		{
+			system("clear");
 			std::cout << std::endl << q.back().to_string() << std::endl;
 			q.pop();
 		}
-		// sleep(1 / FPS);
+		sleep(1 / FPS);
 	}
 	t.join();
 	(void)ac;

@@ -6,13 +6,38 @@
 #include <cstdlib>
 #include <algorithm>
 #include <queue>
+#include <atomic>
 
 struct
 MapPoint
 {
-	int terrain_height = 0;
-	int water_level = 0;
+	std::atomic<int> terrain_height;
+	std::atomic<int> water_level;
+	MapPoint();
+	MapPoint(const MapPoint & rhs);
+	~MapPoint();
+	MapPoint & operator=(const MapPoint & rhs);
 };
+
+
+
+MapPoint::MapPoint() : terrain_height(0), water_level(0)
+{}
+
+MapPoint::MapPoint(const MapPoint & rhs)
+{
+	terrain_height = rhs.terrain_height.load();
+	water_level = rhs.water_level.load();
+}
+
+MapPoint::~MapPoint()
+{}
+
+MapPoint & MapPoint::operator=(const MapPoint & rhs)
+{
+	std::memcpy(this, &rhs, sizeof(*this));
+	return *this;
+}
 
 class
 Map
@@ -29,7 +54,7 @@ public:
 	~Map() = default;
 	void drop_water(int x, int y, int quantity);
 	void apply_gravity(void);
-	void elevate_rect(int x0, int y0, int x1, int y1, int value, int smoothing);
+	void elevate_rect(int x0, int y0, int x1, int y1, int value);
 	std::string to_string(void) const;
 };
 
@@ -48,7 +73,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (16)
+# define MAX_THREAD_COUNT (40)
 # include <thread>
 
 void
@@ -56,19 +81,19 @@ Map::apply_gravity(void)
 {
 	std::thread * threads[MAX_THREAD_COUNT];
 
-	for (int thread_id = 0; thread_id < (double)MAX_THREAD_COUNT; thread_id++)
+	for (int thread_id = 0; thread_id < MAX_THREAD_COUNT; thread_id++)
 	{
 		threads[thread_id] = new std::thread([this, thread_id](){
 			std::vector<MapPoint*> neighbours;
 			neighbours.reserve(9);
-			for (int y = thread_id * (this->height / (double)MAX_THREAD_COUNT); y < (thread_id+1) * (this->height / (double)MAX_THREAD_COUNT); y++)
+			for (int y = (double)thread_id * ((double)this->height / (double)MAX_THREAD_COUNT); (double)y < (double)((double)thread_id+1.0) * (double)((double)this->height / (double)MAX_THREAD_COUNT); y++)
 			{
 				for (int x = 0; x < this->width; x++)
 				{
 					// this->data[x][y].terrain_height = 10000000;
 					for (int l = 0; l < this->data[x][y].water_level * (1.0 - this->viscosity); l++)
 					{
-						this->data[x][y].water_level -= 1;
+						this->data[x][y].water_level--;
 						neighbours.clear();
 						neighbours.push_back(&this->data[x][y]);
 						for (int i = 1; i <= 1; i++)
@@ -99,7 +124,7 @@ Map::apply_gravity(void)
 								map_point = n;
 							}
 						}
-						map_point->water_level += 1;
+						map_point->water_level++;
 					}
 				}
 			}
@@ -128,7 +153,7 @@ Map::to_string(void) const
 	{
 		for (int x = 0; x < this->width; x++)
 		{
-			char * color;
+			std::string color;
 			if (this->data[x][y].water_level == 0)
 			{
 				color = GREEN;
@@ -152,7 +177,7 @@ Map::to_string(void) const
 }
 
 void
-Map::elevate_rect(int x0, int y0, int x1, int y1, int value, int smoothing)
+Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 {
 	int width = x1 - x0;
 	int height = y1 - y0;
@@ -172,16 +197,16 @@ main(int ac, char const *av[])
 {
 	std::queue<Map> q;
 	Map map(40, 20);
-	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50, 5);
+	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
-	// map.elevate_rect(20, 0, 20 + 3, map.height, 85, 5);
-	// map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60, 0);
-	map.drop_water(map.width / 2, map.height / 2, 30000);
+	// map.elevate_rect(20, 0, 20 + 3, map.height, 85);
+	// map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60);
+	map.drop_water(map.width / 2, map.height / 2, 80000);
 	std::thread t([&q, &map]{
 		while (1)
 		{
-			map.drop_water(map.width - 3, map.height - 3, 200);
+			// map.drop_water(map.width - 3, map.height - 3, 100);
 			map.apply_gravity();
 			q.push(map);
 		}

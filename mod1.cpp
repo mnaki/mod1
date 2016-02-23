@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <queue>
 #include <atomic>
+#include <mutex>
 
 struct
 MapPoint
@@ -73,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (40)
+# define MAX_THREAD_COUNT (1)
 # include <thread>
 
 void
@@ -190,36 +191,51 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	}
 }
 
-# define FPS 60
+# define RENDER_AHEAD 10
 
 int
 main(int ac, char const *av[])
 {
 	std::queue<Map> q;
-	Map map(40, 20);
+	std::mutex mtx;
+	Map map(100, 40);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
-	// map.elevate_rect(20, 0, 20 + 3, map.height, 85);
-	// map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60);
-	map.drop_water(map.width / 2, map.height / 2, 80000);
-	std::thread t([&q, &map]{
+	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
+	map.elevate_rect(1, map.height - 20, 15, map.height - 1, -60);
+	// map.drop_water(map.width / 2, map.height / 2, 180000);
+	std::thread t([&q, &map, &mtx]{
 		while (1)
 		{
-			// map.drop_water(map.width - 3, map.height - 3, 100);
+			mtx.lock();
+			if (q.size() >= RENDER_AHEAD)
+			{
+				mtx.unlock();
+				continue ;
+			}
+			mtx.unlock();
+			map.drop_water(0, 0, 1000);
 			map.apply_gravity();
+			mtx.lock();
 			q.push(map);
+			mtx.unlock();
 		}
 	});
 	while (1)
 	{
-		if (q.size() > 0)
+		mtx.lock();
+		if (q.size() < 1)
 		{
-			system("clear");
-			std::cout << std::endl << q.back().to_string() << std::endl;
-			q.pop();
+			mtx.unlock();
+			continue ;
 		}
-		sleep(1 / FPS);
+		mtx.unlock();
+		system("clear");
+		std::cout << std::endl << q.back().to_string() << std::endl;
+		mtx.lock();
+		q.pop();
+		mtx.unlock();
 	}
 	t.join();
 	(void)ac;

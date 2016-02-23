@@ -74,7 +74,7 @@ Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-# define MAX_THREAD_COUNT (100)
+# define MAX_THREAD_COUNT (16)
 # include <thread>
 
 void
@@ -108,19 +108,22 @@ Map::apply_gravity(void)
 								neighbours.push_back(&this->data[x-i][y]);
 							if (y >= i)
 								neighbours.push_back(&this->data[x][y-i]);
-							if (x < this->width - i && y < this->height - i)
-								neighbours.push_back(&this->data[x+i][y+i]);
-							if (x >= i && y < this->height - i)
-								neighbours.push_back(&this->data[x-i][y+i]);
-							if (y >= i && x < this->width - i)
-								neighbours.push_back(&this->data[x+i][y-i]);
-							if (x >= i && y >= i)
-								neighbours.push_back(&this->data[x-i][y-i]);
+
+							// diagonales
+
+							// if (x < this->width - i && y < this->height - i)
+							// 	neighbours.push_back(&this->data[x+i][y+i]);
+							// if (x >= i && y < this->height - i)
+							// 	neighbours.push_back(&this->data[x-i][y+i]);
+							// if (y >= i && x < this->width - i)
+							// 	neighbours.push_back(&this->data[x+i][y-i]);
+							// if (x >= i && y >= i)
+							// 	neighbours.push_back(&this->data[x-i][y-i]);
 						}
 						MapPoint * map_point = neighbours[0];
 						for (MapPoint * n : neighbours)
 						{
-							if (n->terrain_height + n->water_level < map_point->terrain_height + map_point->water_level)
+							if (n->terrain_height.load() + n->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
 							{
 								map_point = n;
 							}
@@ -191,8 +194,8 @@ Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	}
 }
 
-# define RENDER_AHEAD 60
-# define FPS 30
+# define RENDER_AHEAD 3
+# define FPS 25
 
 int
 main(int ac, char const *av[])

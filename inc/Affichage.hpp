@@ -3,6 +3,20 @@
 #include "MapPoint.class.hpp"
 #include "Map.class.hpp"
 
+#ifdef __LINUX__
+# include <GL/glut.h>
+#endif
+
+#ifdef __WIN__
+# include <GL/glut.h>
+# include <GL/glu.h>
+# include <GL/gl.h>
+# include <windows.h>
+#endif
+
+#ifdef __MAC__
+# include <GLUT/glut.h>
+#endif
 
 #define MAX_LVL_WATER	100
 #define MAX_LVL_TERRAIN	85

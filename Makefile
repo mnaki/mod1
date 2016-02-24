@@ -22,6 +22,9 @@ FLAGS_OPTI = -Ofast
 CFLAGS = $(FLAGS_ERROR) $(FLAGS_INCLUDES) -std=gnu++11 $(FLAGS_OPTI) $(DEFS)
 ifeq ($(DEFS),-D__LINUX__)
                 LFLAGS = $(CFLAGS) -lGL -lglut -lGLU -lX11 -lm -lrt -lpthread
+else ifeq ($(DEFS),-D__WIN__)
+                LFLAGS = $(CFLAGS) -LC:/freeglut/lib/ -lfreeglut -lopengl32 -lpthread
+                CFLAGS += -IC:/freeglut/include/
 else
                 LFLAGS = $(CFLAGS) -framework GLUT -framework Opengl
 endif

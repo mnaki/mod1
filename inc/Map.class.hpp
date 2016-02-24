@@ -13,7 +13,7 @@
 #include <thread>
 #include "MapPoint.class.hpp"
 
-# define MAX_THREAD_COUNT (3)
+# define MAX_THREAD_COUNT (6)
 
 # define YELLOW "\033[1;33m"
 # define WHITE "\033[1;37m"

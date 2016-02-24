@@ -10,7 +10,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(80, 60);
+	Map map(200, 150);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
@@ -41,7 +41,7 @@ int	main(int ac, char **av)
 			if (q.size() >= RENDER_AHEAD)
 			{
 				mtx.unlock();
-				usleep(10000);
+				sleep(0);
 				continue ;
 			}
 			mtx.unlock();
@@ -51,6 +51,7 @@ int	main(int ac, char **av)
 			q.push(map);
 			mtx.unlock();
 			glutPostRedisplay();
+			sleep(0);
 		}
 	});
  	glutMainLoop();

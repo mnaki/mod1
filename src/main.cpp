@@ -12,12 +12,12 @@ int	main(int ac, char **av)
 	// creation de la map
 	Map map(200, 150);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
-	map.viscosity = 0;
+	map.viscosity = 0.5;
 	std::cout << "started" << std::endl;
 	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
 	for (int y = 0; y < map.height - 4; y++)
 	{
-		map.elevate_rect(map.width / 2 - 6, 0, map.width / 2 - 5, y, 100);
+		map.elevate_rect(map.width / 2 - 6, 10, map.width / 2 - 5, y, 100);
 	}
 
 	// creation de la fenetre en fonction de la map
@@ -32,24 +32,25 @@ int	main(int ac, char **av)
 	// map.drop_water(map.width / 2, map.height / 2, 400000);
 
 	// La vague :
-	for (int y = 0; y < map.height; y++)
-		map.drop_water(map.width - 1, y, map.width * map.height);
+	// for (int x = 0; x < map.width; x++)
+	// 	map.drop_water(x, 0, map.width * map.height);
+	map.drop_water(map.width / 4, 0, 1000000);
 	std::thread t([&map]{
 		while (1)
 		{
-			mtx.lock();
+			// mtx.lock();
 			if (q.size() >= RENDER_AHEAD)
 			{
-				mtx.unlock();
+				// mtx.unlock();
 				sleep(0);
 				continue ;
 			}
-			mtx.unlock();
-			// map.drop_water(0, 0, 100);
+			// mtx.unlock();
+			// map.drop_water(0, 0, 200);
 			map.apply_gravity();
-			mtx.lock();
+			// mtx.lock();
 			q.push(map);
-			mtx.unlock();
+			// mtx.unlock();
 			glutPostRedisplay();
 			sleep(0);
 		}

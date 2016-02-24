@@ -56,12 +56,13 @@ void	display(void)
 	}
 	glEnd();
 	glFlush();  /* Single buffered, so needs a flush. */
+	glutPostRedisplay();
 
 	mtx.lock();
 	q.pop();
 	mtx.unlock();
 
-	glutPostRedisplay();
+	// 
 	/*t2 = time(NULL);
 	if (t2 != t1)
 		t1 = t2;

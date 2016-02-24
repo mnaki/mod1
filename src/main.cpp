@@ -1,6 +1,10 @@
 #include "Affichage.hpp"
 #include "general.hpp"
+#ifdef __LINUX__
+#include <GL/glut.h>
+#else
 #include <GLUT/glut.h>
+#endif
 
 std::queue<Map> q;
 std::mutex mtx;

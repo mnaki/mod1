@@ -1,6 +1,10 @@
 #include "Affichage.hpp"
 #include "general.hpp"
+#ifdef __LINUX__
+#include <GL/glut.h>
+#else
 #include <GLUT/glut.h>
+#endif
 
 void	reshape(int w, int h)
 {

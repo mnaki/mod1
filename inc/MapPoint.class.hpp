@@ -10,6 +10,7 @@
 #include <queue>
 #include <atomic>
 #include <mutex>
+#include <cstring>
 
 struct MapPoint
 {

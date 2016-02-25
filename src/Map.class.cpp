@@ -55,7 +55,7 @@ void Map::apply_gravity(void)
 							// if (y >= i && x < this->width - i)
 							// 	neighbours[8] = (&this->data[x+i][y-i]);
 						MapPoint * map_point = neighbours[0];
-						for (int i = 0; i < 9; i++)
+						for (int i = 0; i <= 4; i++)
 						{
 							if (neighbours[i] != NULL && neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
 								map_point = neighbours[i];

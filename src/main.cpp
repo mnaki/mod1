@@ -11,13 +11,13 @@ int	main(int ac, char **av)
 
 	// creation de la map
 	Map map(200, 150);
-	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
+	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -5);
 	map.viscosity = 0.5;
 	std::cout << "started" << std::endl;
-	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
+	map.elevate_rect(20, 0, 20 + 3, map.height, 1);
 	for (int y = 0; y < map.height - 4; y++)
 	{
-		map.elevate_rect(map.width / 2 - 6, 10, map.width / 2 - 5, y, 100);
+		map.elevate_rect(map.width / 2 - 6, 10, map.width / 2 - 5, y, 2);
 	}
 
 	// creation de la fenetre en fonction de la map
@@ -28,6 +28,7 @@ int	main(int ac, char **av)
 	glutCreateWindow("single triangle");
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+  	glutKeyboardFunc(keyboard);
 	// map.drop_water(10, 10, 40000);
 	// map.drop_water(map.width / 2, map.height / 2, 400000);
 
@@ -46,7 +47,7 @@ int	main(int ac, char **av)
 			}
 			if (q.size() > 0)
 			{
-				std::cout << "display" << std::endl;
+				//std::cout << "display" << std::endl;
 				glutPostRedisplay();
 			}
 			else

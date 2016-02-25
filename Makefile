@@ -6,7 +6,7 @@
 #    By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/02/23 20:57:43 by bgauci            #+#    #+#              #
-#    Updated: 2016/02/23 21:01:26 by bgauci           ###   ########.fr        #
+#    Updated: 2016/02/25 18:42:42 by bgauci           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,8 @@ else
                 LFLAGS = $(CFLAGS) -framework GLUT -framework Opengl
 endif
 
-FLAGS_ERROR =	-Wall -Wextra
+FLAGS_ERROR =	-Wall -Wextra -Wno-deprecated-declarations
+
 
 SRC =		$(SRCDIR)/main.cpp				\
 			$(SRCDIR)/Affichage.cpp			\

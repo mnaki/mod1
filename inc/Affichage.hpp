@@ -5,25 +5,24 @@
 
 #ifdef __LINUX__
 # include <GL/glut.h>
-#endif
-
-#ifdef __WIN__
-# include <GL/glut.h>
-# include <GL/glu.h>
-# include <GL/gl.h>
-# include <windows.h>
-#endif
-
-#ifdef __MAC__
-# include <GLUT/glut.h>
+#else
+# ifdef __WIN__
+#  include <GL/glut.h>
+#  include <GL/glu.h>
+#  include <GL/gl.h>
+#  include <windows.h>
+# else
+#  include <GLUT/glut.h>
+# endif
 #endif
 
 #define MAX_LVL_WATER	100
 #define MAX_LVL_TERRAIN	85
-#define W_Width			1200
-#define W_Height		800
+#define W_Width			1800
+#define W_Height		1600
 #define LARGEUR_PIXEL	2
 #define LONGEUR_PIXEL	2
 
 void	reshape(int w, int h);
 void	display(void);
+void	keyboard(unsigned char ch, int x, int y);

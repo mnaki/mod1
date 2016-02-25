@@ -46,14 +46,14 @@ void Map::apply_gravity(void)
 							// diagonales
 							// a voir
 
-							if (x < this->width - i && y < this->height - i)
-								neighbours[5] = (&this->data[x+i][y+i]);
-							if (x >= i && y < this->height - i)
-								neighbours[6] = (&this->data[x-i][y+i]);
-							if (x >= i && y >= i)
-								neighbours[7] = (&this->data[x-i][y-i]);
-							if (y >= i && x < this->width - i)
-								neighbours[8] = (&this->data[x+i][y-i]);
+							// if (x < this->width - i && y < this->height - i)
+							// 	neighbours[5] = (&this->data[x+i][y+i]);
+							// if (x >= i && y < this->height - i)
+							// 	neighbours[6] = (&this->data[x-i][y+i]);
+							// if (x >= i && y >= i)
+							// 	neighbours[7] = (&this->data[x-i][y-i]);
+							// if (y >= i && x < this->width - i)
+							// 	neighbours[8] = (&this->data[x+i][y-i]);
 						MapPoint * map_point = neighbours[0];
 						for (int i = 0; i < 9; i++)
 						{
@@ -63,6 +63,7 @@ void Map::apply_gravity(void)
 						map_point->water_level++;
 						// m.unlock();
 					}
+					// sleep(0);
 				}
 			}
 		});

@@ -38,7 +38,7 @@ int	main(int ac, char **av)
 		while (1)
 		{
 			mtx.lock();
-			map.drop_water(map.width - map.width / 6, 0, 100);
+			map.drop_water(map.width - map.width / 3, 0, 1000);
 			if (q.size() <= RENDER_AHEAD)
 			{
 				map.apply_gravity();

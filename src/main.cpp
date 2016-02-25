@@ -10,7 +10,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(100, 100);
+	Map map(200, 200);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;
@@ -37,7 +37,7 @@ int	main(int ac, char **av)
 	std::thread t([&map]{
 		while (1)
 		{
-			map.drop_water(map.width - map.width / 1.5, 100, 100);
+			map.drop_water(map.width - map.width / 1.5, 100, 10000);
 			if (q.size() <= RENDER_AHEAD)
 			{
 				map.apply_gravity();
@@ -49,8 +49,9 @@ int	main(int ac, char **av)
 			}
 			else
 			{
+				usleep(1000000);
 			}
-			usleep(100000 / FPS);
+			usleep(1000000 / FPS);
 		}
 	});
  	glutMainLoop();

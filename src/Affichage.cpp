@@ -13,10 +13,10 @@ void	reshape(int w, int h)
 
 void	display(void)
 {
-    mtx.lock();
+    // mtx.lock();
     Map cmap = q.front();
     q.pop();
-    mtx.unlock();
+    // mtx.unlock();
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);

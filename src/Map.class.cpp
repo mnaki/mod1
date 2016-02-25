@@ -62,7 +62,6 @@ void Map::apply_gravity(void)
 						map_point->water_level++;
 						// m.unlock();
 					}
-					// sleep(0);
 				}
 			}
 		});

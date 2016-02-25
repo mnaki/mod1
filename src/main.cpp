@@ -34,25 +34,21 @@ int	main(int ac, char **av)
 	// La vague :
 	// for (int x = 0; x < map.width; x++)
 	// 	map.drop_water(x, 0, map.width * map.height);
-	map.drop_water(map.width / 4, 0, 1000000);
 	std::thread t([&map]{
 		while (1)
 		{
-			// mtx.lock();
-			if (q.size() >= RENDER_AHEAD)
+			map.drop_water(map.width / 4, 0, 1);
+			if (q.size() > 0)
 			{
-				// mtx.unlock();
+				glutPostRedisplay();
+			}
+			if (q.size() == RENDER_AHEAD)
+			{
 				sleep(0);
 				continue ;
 			}
-			// mtx.unlock();
-			// map.drop_water(0, 0, 200);
 			map.apply_gravity();
-			// mtx.lock();
 			q.push(map);
-			// mtx.unlock();
-			glutPostRedisplay();
-			sleep(0);
 		}
 	});
  	glutMainLoop();

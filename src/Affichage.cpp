@@ -13,19 +13,8 @@ void	reshape(int w, int h)
 
 void	display(void)
 {
-	static time_t	t1 = 0, t2 = 0;
-
-	// thread safe
-	mtx.lock();
-	if (q.size() < 1)
-	{
-		mtx.unlock();
-		return ;
-	}
-	mtx.unlock();
-	// end thread safe
-
-	Map cmap = q.front();
+    Map cmap = q.front();
+    q.pop();
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POINTS);
@@ -55,17 +44,5 @@ void	display(void)
 		}
 	}
 	glEnd();
-	glFlush();  /* Single buffered, so needs a flush. */
-	glutPostRedisplay();
-
-	mtx.lock();
-	q.pop();
-	mtx.unlock();
-
-	// 
-	/*t2 = time(NULL);
-	if (t2 != t1)
-		t1 = t2;
-	else
-		usleep(1000000 / FPS);*/
+	glFlush();
 }

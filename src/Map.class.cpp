@@ -23,17 +23,14 @@ void Map::apply_gravity(void)
 	{
 		threads[thread_id] = new std::thread([this, thread_id, &m](){
 			MapPoint* neighbours[9] = {NULL};
-			// neighbours.reserve(9);
-			for (int x = thread_id * (this->width / MAX_THREAD_COUNT); x < (thread_id+1) * (this->width / MAX_THREAD_COUNT); x++)
+			for (int x = thread_id * (this->width / MAX_THREAD_COUNT); x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT); x++)
 			{
 				for (int y = 0; y < this->height; y++)
 				{
-					// this->data[x][y].terrain_height = 10000000;
 					for (int l = 0; l < this->data[x][y].water_level * (1.0 - this->viscosity); l++)
 					{
 						// m.lock();
 						this->data[x][y].water_level--;
-						// neighbours.clear();
 						neighbours[0] = (&this->data[x][y]);
 
 							int i = 1;
@@ -66,7 +63,6 @@ void Map::apply_gravity(void)
 						map_point->water_level++;
 						// m.unlock();
 					}
-					sleep(0);
 				}
 			}
 		});

@@ -46,16 +46,16 @@ void Map::apply_gravity(void)
 							// diagonales
 							// a voir
 
-							// if (x < this->width - i && y < this->height - i)
-							// 	neighbours.push_back(&this->data[x+i][y+i]);
-							// if (x >= i && y < this->height - i)
-							// 	neighbours.push_back(&this->data[x-i][y+i]);
-							// if (x >= i && y >= i)
-							// 	neighbours.push_back(&this->data[x-i][y-i]);
-							// if (y >= i && x < this->width - i)
-							// 	neighbours.push_back(&this->data[x+i][y-i]);
+							if (x < this->width - i && y < this->height - i)
+								neighbours[5] = (&this->data[x+i][y+i]);
+							if (x >= i && y < this->height - i)
+								neighbours[6] = (&this->data[x-i][y+i]);
+							if (x >= i && y >= i)
+								neighbours[7] = (&this->data[x-i][y-i]);
+							if (y >= i && x < this->width - i)
+								neighbours[8] = (&this->data[x+i][y-i]);
 						MapPoint * map_point = neighbours[0];
-						for (int i = 0; i < 4; i++)
+						for (int i = 0; i < 9; i++)
 						{
 							if (neighbours[i] != NULL && neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
 								map_point = neighbours[i];

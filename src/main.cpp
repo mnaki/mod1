@@ -37,18 +37,24 @@ int	main(int ac, char **av)
 	std::thread t([&map]{
 		while (1)
 		{
-			map.drop_water(map.width / 4, 0, 1);
+			mtx.lock();
+			map.drop_water(map.width - map.width / 6, 0, 100);
+			if (q.size() <= RENDER_AHEAD)
+			{
+				map.apply_gravity();
+				q.push(map);
+			}
 			if (q.size() > 0)
 			{
+				std::cout << "display" << std::endl;
 				glutPostRedisplay();
 			}
-			if (q.size() == RENDER_AHEAD)
+			else
 			{
-				sleep(0);
-				continue ;
+				std::cout << "not enough prerendered frame" << std::endl;
 			}
-			map.apply_gravity();
-			q.push(map);
+			mtx.unlock();
+			// usleep(100000 / FPS);
 		}
 	});
  	glutMainLoop();

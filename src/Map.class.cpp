@@ -22,7 +22,7 @@ void Map::apply_gravity(void)
 	for (int thread_id = 0; thread_id < MAX_THREAD_COUNT; thread_id++)
 	{
 		threads[thread_id] = new std::thread([this, thread_id, &m](){
-			MapPoint* neighbours[9] = {NULL};
+			MapPoint* neighbours[9] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT); x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT); x++)
 			{
 				for (int y = 0; y < this->height; y++)
@@ -46,16 +46,16 @@ void Map::apply_gravity(void)
 							// diagonales
 							// a voir
 
-							// if (x < this->width - i && y < this->height - i)
-							// 	neighbours[5] = (&this->data[x+i][y+i]);
-							// if (x >= i && y < this->height - i)
-							// 	neighbours[6] = (&this->data[x-i][y+i]);
-							// if (x >= i && y >= i)
-							// 	neighbours[7] = (&this->data[x-i][y-i]);
-							// if (y >= i && x < this->width - i)
-							// 	neighbours[8] = (&this->data[x+i][y-i]);
+							if (x < this->width - i && y < this->height - i)
+								neighbours[5] = (&this->data[x+i][y+i]);
+							if (x >= i && y < this->height - i)
+								neighbours[6] = (&this->data[x-i][y+i]);
+							if (x >= i && y >= i)
+								neighbours[7] = (&this->data[x-i][y-i]);
+							if (y >= i && x < this->width - i)
+								neighbours[8] = (&this->data[x+i][y-i]);
 						MapPoint * map_point = neighbours[0];
-						for (int i = 0; i <= 4; i++)
+						for (int i = 0; i <= 8; i++)
 						{
 							if (neighbours[i] != NULL && neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
 								map_point = neighbours[i];

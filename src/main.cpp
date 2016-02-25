@@ -10,9 +10,9 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(200, 150);
+	Map map(100, 100);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
-	map.viscosity = 0.5;
+	map.viscosity = 0;
 	std::cout << "started" << std::endl;
 	map.elevate_rect(20, 0, 20 + 3, map.height, 85);
 	for (int y = 0; y < map.height - 4; y++)
@@ -37,8 +37,7 @@ int	main(int ac, char **av)
 	std::thread t([&map]{
 		while (1)
 		{
-			mtx.lock();
-			map.drop_water(map.width - map.width / 1.5, 0, 300);
+			map.drop_water(map.width - map.width / 1.5, 100, 100);
 			if (q.size() <= RENDER_AHEAD)
 			{
 				map.apply_gravity();
@@ -46,15 +45,12 @@ int	main(int ac, char **av)
 			}
 			if (q.size() > 0)
 			{
-				std::cout << "display" << std::endl;
 				glutPostRedisplay();
 			}
 			else
 			{
-				std::cout << "not enough prerendered frame" << std::endl;
 			}
-			mtx.unlock();
-			// usleep(100000 / FPS);
+			usleep(100000 / FPS);
 		}
 	});
  	glutMainLoop();

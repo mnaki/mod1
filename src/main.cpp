@@ -12,7 +12,7 @@ int	main(int ac, char **av)
 	// creation de la map
 	Map map(200, 150);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -5);
-	map.viscosity = 0.5;
+	map.viscosity = 0;
 	std::cout << "started" << std::endl;
 	map.elevate_rect(20, 0, 20 + 3, map.height, 1);
 	for (int y = 0; y < map.height - 4; y++)
@@ -38,8 +38,7 @@ int	main(int ac, char **av)
 	std::thread t([&map]{
 		while (1)
 		{
-			mtx.lock();
-			map.drop_water(map.width - map.width / 1.5, 0, 100);
+			map.drop_water(map.width - map.width / 1.5, 100, 10000);
 			if (q.size() <= RENDER_AHEAD)
 			{
 				map.apply_gravity();
@@ -52,10 +51,9 @@ int	main(int ac, char **av)
 			}
 			else
 			{
-				std::cout << "not enough prerendered frame" << std::endl;
+				usleep(1000000);
 			}
-			mtx.unlock();
-			// usleep(100000 / FPS);
+		//	usleep(1000000 / FPS);
 		}
 	});
  	glutMainLoop();

@@ -10,7 +10,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(100, 100);
+	Map map(1000, 1000);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -50);
 	map.viscosity = 0;
 	std::cout << "started" << std::endl;

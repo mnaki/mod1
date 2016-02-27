@@ -29,7 +29,7 @@ int	main(int ac, char **av)
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
 
-	map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 1000000);
+	map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 100000);
 	std::thread t([&map]{
 		while (1)
 		{

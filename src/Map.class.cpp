@@ -31,28 +31,28 @@ void Map::apply_gravity(void)
 						this->data[x][y].water_level--;
 						int i = 1;
 						if (x < this->width - i)
-							neighbours[1] = (&this->data[x+i][y]);
+							neighbours[0] = (&this->data[x+i][y]);
 						if (x >= i)
-							neighbours[2] = (&this->data[x-i][y]);
+							neighbours[1] = (&this->data[x-i][y]);
 						if (y < this->height - i)
-							neighbours[3] = (&this->data[x][y+i]);
+							neighbours[2] = (&this->data[x][y+i]);
 						if (y >= i)
-							neighbours[4] = (&this->data[x][y-i]);
+							neighbours[3] = (&this->data[x][y-i]);
 
 						// diagonales
 						// a voir
 
-						// if (x < this->width - i && y < this->height - i)
-						// 	neighbours[4] = (&this->data[x+i][y+i]);
-						// if (x >= i && y < this->height - i)
-						// 	neighbours[5] = (&this->data[x-i][y+i]);
-						// if (x >= i && y >= i)
-						// 	neighbours[6] = (&this->data[x-i][y-i]);
-						// if (y >= i && x < this->width - i)
-						// 	neighbours[7] = (&this->data[x+i][y-i]);
+						if (x < this->width - i && y < this->height - i)
+							neighbours[4] = (&this->data[x+i][y+i]);
+						if (x >= i && y < this->height - i)
+							neighbours[5] = (&this->data[x-i][y+i]);
+						if (x >= i && y >= i)
+							neighbours[6] = (&this->data[x-i][y-i]);
+						if (y >= i && x < this->width - i)
+							neighbours[7] = (&this->data[x+i][y-i]);
 
 						MapPoint * map_point = (&this->data[x][y]);
-						for (int i = 0; i <= 4; i++)
+						for (int i = 0; i <= 7; i++)
 						{
 							if (neighbours[i] != NULL
 								&& neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load()

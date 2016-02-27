@@ -4,10 +4,10 @@
 #include <stdio.h>
 
 int      CONFIG_max_points = 40;        // Nombre de poygones par côté
-double   CONFIG_taille_carre = 5.0;    // Taille d'un poygone
+double   CONFIG_taille_carre = 1.0;    // Taille d'un poygone
 bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
 bool     CONFIG_SKIP_FRAMES = false;
-GLfloat  CONFIG_ZOOM = 0.010f;
+GLfloat  CONFIG_ZOOM = 0.10f;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -109,7 +109,7 @@ void	display(void)
 	mtx.unlock();
 
 
-	if (CONFIG_rotate) rotate += 0.1f;
+	if (CONFIG_rotate) rotate += 1.1f;
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer

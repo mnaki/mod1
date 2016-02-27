@@ -29,13 +29,23 @@ int	main(int ac, char **av)
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
 
+	map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 1000000);
 	std::thread t([&map]{
 		while (1)
 		{
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 200);
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
+				map.apply_gravity();
 				map.apply_gravity();
 				q.push(map);
 			}

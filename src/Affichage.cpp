@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 
-bool     CONFIG_filaire = true;	        // Filaire ou non
 int      CONFIG_max_points = 40;        // Nombre de poygones par côté
 double   CONFIG_taille_carre = 5.0;    // Taille d'un poygone
 bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
@@ -91,7 +90,7 @@ void	reshape(int w, int h)
 	gluLookAt(1.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);*/
 }
 
-GLfloat rotate = 35.0f;
+GLfloat rotate = 36.0f;
 void	display(void)
 {
     mtx.lock();
@@ -161,14 +160,14 @@ void	display(void)
 		for(j=0, posj=0;j<cmap.height-1;j++, posj += ajout)
 		{
 			GLfloat deepness;
-			deepness = (cmap.data[i][j].water_level + cmap.data[i][j].terrain_height) / (cmap.data[i][j].terrain_height+1.0f);
+			deepness = (cmap.data[i][j].water_level + cmap.data[i][j].terrain_height) / (cmap.data[i][j].terrain_height+30.0f);
 			// GLfloat alpha = 1.0f;
 			if (cmap.data[i][j].water_level > 0)
 				glColor4f(
 					0,
-					1.0f - 0.75f / deepness,
-					1.0f - 0.75f / deepness,
-					1.0f
+					0.4f / deepness,
+					0.9f / deepness,
+					0.9f
 				);
 			else
 				glColor4f(

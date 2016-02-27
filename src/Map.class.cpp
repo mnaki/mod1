@@ -21,7 +21,7 @@ void Map::apply_gravity(void)
 	for (int thread_id = 0; thread_id < MAX_THREAD_COUNT; thread_id++)
 	{
 		threads[thread_id] = new std::thread([this, thread_id](){
-			MapPoint* neighbours[9] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+			MapPoint* neighbours[8] = { NULL };
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT); x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT); x++)
 			{
 				for (int y = 0; y < this->height; y++)
@@ -29,7 +29,6 @@ void Map::apply_gravity(void)
 					for (int l = 0; l < this->data[x][y].water_level * (1.0 - this->viscosity); l++)
 					{
 						this->data[x][y].water_level--;
-						neighbours[0] = (&this->data[x][y]);
 						int i = 1;
 						if (x < this->width - i)
 							neighbours[1] = (&this->data[x+i][y]);
@@ -52,10 +51,12 @@ void Map::apply_gravity(void)
 						// if (y >= i && x < this->width - i)
 						// 	neighbours[7] = (&this->data[x+i][y-i]);
 
-						MapPoint * map_point = neighbours[0];
-						for (int i = 0; i < 9; i++)
+						MapPoint * map_point = (&this->data[x][y]);
+						for (int i = 0; i <= 4; i++)
 						{
-							if (neighbours[i] != NULL && neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
+							if (neighbours[i] != NULL
+								&& neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load()
+								     < map_point->terrain_height.load() + map_point->water_level.load())
 							{
 								map_point = neighbours[i];
 							}

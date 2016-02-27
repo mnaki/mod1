@@ -10,7 +10,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(1000, 1000);
+	Map map(300, 300);
 	map.elevate_rect(map.width / 3.5, map.height / 3.5, map.width - map.width / 3.5, map.height - map.height / 3.5, 100);
 	map.elevate_rect(map.width / 3, map.height / 3, map.width - map.width / 3, map.height - map.height / 3, -20);
 	map.elevate_rect(map.width / 2.1, map.height / 2.1, map.width - map.width / 2.1, map.height - map.height / 2.1, 100);
@@ -35,7 +35,7 @@ int	main(int ac, char **av)
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 20000);
+				map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 200);
 				map.apply_gravity();
 				q.push(map);
 			}

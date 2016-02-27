@@ -7,7 +7,7 @@ int      CONFIG_max_points = 40;        // Nombre de poygones par côté
 double   CONFIG_taille_carre = 1.0;    // Taille d'un poygone
 bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
 bool     CONFIG_SKIP_FRAMES = false;
-GLfloat  CONFIG_ZOOM = 0.10f;
+GLfloat  CONFIG_ZOOM = 0.1f;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -55,6 +55,16 @@ void	keyboard(unsigned char ch, int x, int y)
 			std::cout << "CONFIG_SKIP_FRAMES = " << CONFIG_SKIP_FRAMES << std::endl;
 		}
 			break;
+		case '=': {
+			CONFIG_ZOOM += 0.1f;
+			std::cout << "CONFIG_ZOOM = " << CONFIG_ZOOM << std::endl;
+		}
+			break ;
+		case '-': {
+			CONFIG_ZOOM -= 0.1f;
+			std::cout << "CONFIG_ZOOM = " << CONFIG_ZOOM << std::endl;
+		}
+			break ;
 		default:
 			break;
 	}
@@ -94,6 +104,11 @@ GLfloat rotate = 36.0f;
 void	display(void)
 {
     mtx.lock();
+    if (q.size() <= 0)
+    {
+    	// sleep(0);
+    	return ;
+    }
     Map cmap = q.back();
 	if (CONFIG_SKIP_FRAMES)
 	{
@@ -115,16 +130,16 @@ void	display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 
 	int i,j;
-	double ajout = CONFIG_taille_carre / CONFIG_max_points,posi,posj;
+	double ajout = CONFIG_taille_carre,posi,posj;
 
 	glLoadIdentity();
 	glTranslatef(xpos, ypos, zpos);
-	glScalef(CONFIG_ZOOM, CONFIG_ZOOM, CONFIG_ZOOM);
 
 	glRotatef(-80.0f,0.0f,0.0f,0.0f);
 	glRotatef(0.0f,0.0f,0.0f,1.0f);
 	glRotatef(-30.0f,1.0f,0.0f,0.0f);
 	glRotatef(10.0f + rotate,0.0f,0.0f,1.0f);
+	glScalef(CONFIG_ZOOM, CONFIG_ZOOM, CONFIG_ZOOM);
 	std::cout << "rotate = " << rotate << std::endl;
 
 
@@ -179,17 +194,17 @@ void	display(void)
 
             // premier triangle
 			glTexCoord2f( (float)j / cmap.height, (float)i/cmap.width);
-			glVertex3d(posi,posj,((cmap.data[i][j].water_level-1.0f)/100.0 + cmap.data[i][j].terrain_height / 100.0));
+			glVertex3d(posi,posj,((cmap.data[i][j].water_level-1.0f)/1000.0 + cmap.data[i][j].terrain_height / 1000.0));
 
 			glTexCoord2f( ((float)j+1)/cmap.height,(float)i/cmap.width);
-			glVertex3d(posi,posj+ajout,((cmap.data[i][j+1].water_level-1.0f)/100.0 + cmap.data[i][j+1].terrain_height / 100.0));
+			glVertex3d(posi,posj+ajout,((cmap.data[i][j+1].water_level-1.0f)/1000.0 + cmap.data[i][j+1].terrain_height / 1000.0));
 
             glTexCoord2f( (float)j/cmap.height, ((float)i+1)/cmap.width);
-            glVertex3d(posi+ajout,posj,((cmap.data[i+1][j].water_level-1.0f)/100.0 + cmap.data[i+1][j].terrain_height / 100.0));
+            glVertex3d(posi+ajout,posj,((cmap.data[i+1][j].water_level-1.0f)/1000.0 + cmap.data[i+1][j].terrain_height / 1000.0));
 
             // second triangle
             glTexCoord2f( ((float)j+1)/cmap.height,((float)i+1)/cmap.width);
-			glVertex3d(posi+ajout,posj+ajout,((cmap.data[i+1][j+1].water_level-1.0f)/100.0 + cmap.data[i+1][j+1].terrain_height / 100.0));
+			glVertex3d(posi+ajout,posj+ajout,((cmap.data[i+1][j+1].water_level-1.0f)/1000.0 + cmap.data[i+1][j+1].terrain_height / 1000.0));
 		}
 		glEnd();
 	}

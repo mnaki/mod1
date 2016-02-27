@@ -11,9 +11,9 @@ int	main(int ac, char **av)
 
 	// creation de la map
 	Map map(300, 300);
-	map.elevate_rect(map.width / 3.5, map.height / 3.5, map.width - map.width / 3.5, map.height - map.height / 3.5, 100);
-	map.elevate_rect(map.width / 3, map.height / 3, map.width - map.width / 3, map.height - map.height / 3, -20);
-	map.elevate_rect(map.width / 2.1, map.height / 2.1, map.width - map.width / 2.1, map.height - map.height / 2.1, 100);
+	map.elevate_rect(map.width / 3.5, map.height / 3.5, map.width - map.width / 3.5, map.height - map.height / 3.5, 20);
+	map.elevate_rect(map.width / 3, map.height / 3, map.width - map.width / 3, map.height - map.height / 3, -10);
+	map.elevate_rect(map.width / 2.1, map.height / 2.1, map.width - map.width / 2.1, map.height - map.height / 2.1, 80);
 	map.elevate_rect(0, 0, map.width, map.height, 10);
 
 	map.viscosity = 0.7;
@@ -29,23 +29,17 @@ int	main(int ac, char **av)
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
 
-	map.drop_water(map.width / 2 - 1, map.height / 2 - 1, 100000);
 	std::thread t([&map]{
 		while (1)
 		{
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
-				map.apply_gravity();
+				for (size_t x = 0; x < map.width; x++) {
+					for (size_t y = 0; y < map.height; y++) {
+						map.drop_water(x, y, 1);
+					}
+				}
 				map.apply_gravity();
 				q.push(map);
 			}

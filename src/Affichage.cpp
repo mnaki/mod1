@@ -7,7 +7,7 @@ bool     CONFIG_filaire = true;	        // Filaire ou non
 int      CONFIG_max_points = 200;        // Nombre de poygones par côté
 double   CONFIG_taille_carre = 5.0;    // Taille d'un poygone
 bool     CONFIG_rotate = true;         // Terrain qui tourne ou non
-bool     CONFIG_SKIP_FRAMES = true;
+bool     CONFIG_SKIP_FRAMES = false;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre

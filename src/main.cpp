@@ -10,7 +10,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(401, 401);
+	Map map(600, 600);
 	map.elevate_rect(map.width / 5, map.height / 5, map.width - map.width / 5, map.height - map.height / 5, 20);
 	map.elevate_rect(map.width / 3, map.height / 3, map.width - map.width / 3, map.height - map.height / 3, -10);
 	map.elevate_rect(0, 0, map.width, map.height, 0);

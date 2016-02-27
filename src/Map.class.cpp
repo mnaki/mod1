@@ -29,16 +29,16 @@ void Map::apply_gravity(void)
 					for (int l = 0; l < this->data[x][y].water_level * (1.0 - this->viscosity); l++)
 					{
 						this->data[x][y].water_level--;
-						neighbours[4] = (&this->data[x][y]);
+						neighbours[0] = (&this->data[x][y]);
 						int i = 1;
 						if (x < this->width - i)
-							neighbours[0] = (&this->data[x+i][y]);
+							neighbours[1] = (&this->data[x+i][y]);
 						if (x >= i)
-							neighbours[1] = (&this->data[x-i][y]);
+							neighbours[2] = (&this->data[x-i][y]);
 						if (y < this->height - i)
-							neighbours[2] = (&this->data[x][y+i]);
+							neighbours[3] = (&this->data[x][y+i]);
 						if (y >= i)
-							neighbours[3] = (&this->data[x][y-i]);
+							neighbours[4] = (&this->data[x][y-i]);
 
 						// diagonales
 						// a voir

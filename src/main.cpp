@@ -12,7 +12,7 @@ int	main(int ac, char **av)
 	// creation de la map
 	Map map(200, 150);
 	map.elevate_rect(5, 5, 5 + 20, 7 + 10, -5);
-	map.viscosity = 0;
+	map.viscosity = 0.9;
 	std::cout << "started" << std::endl;
 	map.elevate_rect(20, 0, 20 + 3, map.height, 1);
 	for (int y = 0; y < map.height - 4; y++)
@@ -33,12 +33,13 @@ int	main(int ac, char **av)
 	// map.drop_water(map.width / 2, map.height / 2, 400000);
 
 	// La vague :
-	// for (int x = 0; x < map.width; x++)
-	// 	map.drop_water(x, 0, map.width * map.height);
+	for (int x = 0; x < map.width; x++)
+		map.drop_water(x, 0, 1000);
 	std::thread t([&map]{
 		while (1)
 		{
-			map.drop_water(map.width - map.width / 1.5, 100, 10000);
+			// map.drop_water(map.width - map.width / 1.5, 100, 10);
+			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
 				map.apply_gravity();
@@ -51,9 +52,10 @@ int	main(int ac, char **av)
 			}
 			else
 			{
-				usleep(1000000);
+				sleep(0);
 			}
-		//	usleep(1000000 / FPS);
+			mtx.unlock();
+			// sleep(1 / FPS);
 		}
 	});
  	glutMainLoop();

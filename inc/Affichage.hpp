@@ -20,8 +20,8 @@
 #define MAX_LVL_TERRAIN	85
 #define W_Width			1800
 #define W_Height		1600
-#define LARGEUR_PIXEL	2
-#define LONGEUR_PIXEL	2
+#define LARGEUR_PIXEL	1
+#define LONGEUR_PIXEL	1
 
 void	reshape(int w, int h);
 void	display(void);

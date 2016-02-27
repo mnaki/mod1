@@ -4,10 +4,11 @@
 #include <stdio.h>
 
 bool     CONFIG_filaire = true;	        // Filaire ou non
-int      CONFIG_max_points = 200;        // Nombre de poygones par côté
+int      CONFIG_max_points = 40;        // Nombre de poygones par côté
 double   CONFIG_taille_carre = 5.0;    // Taille d'un poygone
-bool     CONFIG_rotate = true;         // Terrain qui tourne ou non
+bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
 bool     CONFIG_SKIP_FRAMES = false;
+GLfloat  CONFIG_ZOOM = 0.010f;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -90,7 +91,7 @@ void	reshape(int w, int h)
 	gluLookAt(1.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);*/
 }
 
-GLfloat rotate = 0.0f;
+GLfloat rotate = 35.0f;
 void	display(void)
 {
     mtx.lock();
@@ -119,13 +120,13 @@ void	display(void)
 
 	glLoadIdentity();
 	glTranslatef(xpos, ypos, zpos);
-	static GLfloat zoom = 0.1f;
-	glScalef(zoom, zoom, zoom);
+	glScalef(CONFIG_ZOOM, CONFIG_ZOOM, CONFIG_ZOOM);
 
 	glRotatef(-80.0f,0.0f,0.0f,0.0f);
 	glRotatef(0.0f,0.0f,0.0f,1.0f);
 	glRotatef(-30.0f,1.0f,0.0f,0.0f);
 	glRotatef(10.0f + rotate,0.0f,0.0f,1.0f);
+	std::cout << "rotate = " << rotate << std::endl;
 
 
 	glEnable (GL_BLEND);

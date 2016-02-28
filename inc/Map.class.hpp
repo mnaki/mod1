@@ -36,6 +36,6 @@ class Map
     	void drop_water(int x, int y, int quantity);
     	void apply_gravity(void);
     	void elevate_rect(int x0, int y0, int x1, int y1, int value);
-        void draw_cone(int start_x, int start_y, int radius, int height);
+        void draw_cone(int start_x, int start_y, int radius, int height, bool reverse = false);
 	    std::string to_string(void) const;
 };

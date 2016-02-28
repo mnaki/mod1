@@ -113,17 +113,22 @@ void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 		this->data[x+x0][y+y0].terrain_height += value;
 }
 
-void Map::draw_cone(int start_x, int start_y, int radius, int height)
+void Map::draw_cone(int start_x, int start_y, int radius, int height, bool reverse)
 {
 	float r = radius;
-	for (double h = 0 ; h < height ; h += 0.5)
+	for (double h = 0 ; h < height ; h += 2)
 	{
 		r *= 0.99f;
-		for (double x = 0 ; x < this->width ; x += 1)
-		for (double y = 0 ; y < this->height ; y += 1)
+		for (double x = 0 ; x < this->width ; x += 0.3)
+		for (double y = 0 ; y < this->height ; y += 0.3)
 		{
 			if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (r) * (r))
-				this->data[x][y].terrain_height += 1;
+			{
+				if (reverse)
+					this->data[x][y].terrain_height -= 1;
+				else
+					this->data[x][y].terrain_height += 1;
+			}
 		}
 	}
 }

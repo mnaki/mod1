@@ -64,6 +64,12 @@ fclean: clean
 	$(RMF) -r $(NAME).dSYM
 	$(RMF) $(NAME)
 
+linux_install:
+	sudo apt-get install freeglut3 freeglut3-dev
+
+linux:
+	make DEFS=-D__LINUX__
+
 clear: clean
 re: fclean all
 

@@ -10,11 +10,12 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(30, 30);
-	map.elevate_rect(map.width / 3.5, map.height / 3.5, map.width - map.width / 3.5, map.height - map.height / 3.5, 20);
-	map.elevate_rect(map.width / 3, map.height / 3, map.width - map.width / 3, map.height - map.height / 3, -10);
-	map.elevate_rect(map.width / 2.1, map.height / 2.1, map.width - map.width / 2.1, map.height - map.height / 2.1, 80);
-	map.elevate_rect(0, 0, map.width, map.height, 10);
+	Map map(20, 20);
+	// map.elevate_rect(map.width / 3.5, map.height / 3.5, map.width - map.width / 3.5, map.height - map.height / 3.5, 20);
+	// map.elevate_rect(map.width / 3, map.height / 3, map.width - map.width / 3, map.height - map.height / 3, -10);
+	// map.elevate_rect(map.width / 2.1, map.height / 2.1, map.width - map.width / 2.1, map.height - map.height / 2.1, 80);
+	// map.elevate_rect(0, 0, map.width, map.height, 10);
+	map.draw_cone(map.width / 2, map.height / 2, (map.width + map.height) / 8, 20);
 
 	map.viscosity = 0.7;
 	std::cout << "started" << std::endl;
@@ -41,9 +42,10 @@ int	main(int ac, char **av)
 				// 	}
 				// }
 
-				for (size_t y = 0; y < map.height; y++) {
-					map.drop_water(0, y, 1);
-				}
+				// for (size_t y = 0; y < map.height; y++) {
+				// 	map.drop_water(0, y, 1);
+				// }
+				map.drop_water(map.width / 2 + 2, map.height / 2, 1);
 				map.apply_gravity();
 				q.push(map);
 			}

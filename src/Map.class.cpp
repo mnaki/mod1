@@ -116,11 +116,10 @@ void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 void Map::draw_cone(int start_x, int start_y, int radius, int height)
 {
 	for (int h = 0 ; h < height ; h++)
-	for (int x1 = 0 ; x1 < this->width ; x1++)
-	for (int y1 = 0 ; y1 < this->height ; y1++)
+	for (int x = 0 ; x < this->width ; x++)
+	for (int y = 0 ; y < this->height ; y++)
 	{
-		int r = radius * (h / (height - h)); // Retrcir le radius en fonction de la difference
-		if ((x1 - start_x) * (x1 - start_x) + (y1 - start_y) * (y1 - start_y) <= r * r)
-			this->data[x1][y1].terrain_height += 1;
+		if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (radius - h / 2) * (radius - h / 2))
+			this->data[x][y].terrain_height += 1;
 	}
 }

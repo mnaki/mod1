@@ -121,6 +121,6 @@ void Map::draw_cone(int start_x, int start_y, int radius, int height)
 	{
 		int r = radius * (h / (height - h)); // Retrcir le radius en fonction de la difference
 		if ((x1 - start_x) * (x1 - start_x) + (y1 - start_y) * (y1 - start_y) <= r * r)
-			this->data[x1][y1] += 1;
+			this->data[x1][y1].terrain_height += 1;
 	}
 }

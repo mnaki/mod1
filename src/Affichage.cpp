@@ -83,9 +83,7 @@ void	reshape(int w, int h)
 
 
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(	/* field of view in degree */ 20.0,
-					/* aspect ratio */ 1.0,
-					/* Z near */ 00.0, /* Z far */ 100.0);
+
 	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(	0.0, 8.0, -5.0,	/* eye is at (0,8,60) */
 				0.0, 0.0, 0.0,	/* center is at (0,8,0) */
@@ -106,7 +104,7 @@ void	display(void)
     mtx.lock();
     if (q.size() <= 0)
     {
-    	// sleep(0);
+    	mtx.unlock();
     	return ;
     }
     Map cmap = q.back();

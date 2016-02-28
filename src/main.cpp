@@ -35,10 +35,14 @@ int	main(int ac, char **av)
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				for (size_t x = 0; x < map.width; x++) {
-					for (size_t y = 0; y < map.height; y++) {
-						map.drop_water(x, y, 1);
-					}
+				// for (size_t x = 0; x < map.width; x++) {
+				// 	for (size_t y = 0; y < map.height; y++) {
+				// 		map.drop_water(x, y, 1);
+				// 	}
+				// }
+
+				for (size_t y = 0; y < map.height; y++) {
+					map.drop_water(0, y, 1);
 				}
 				map.apply_gravity();
 				q.push(map);

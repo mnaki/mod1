@@ -42,14 +42,14 @@ void Map::apply_gravity(void)
 						// diagonales
 						// a voir
 
-						if (x < this->width - i && y < this->height - i)
-							neighbours[4] = (&this->data[x+i][y+i]);
-						if (x >= i && y < this->height - i)
-							neighbours[5] = (&this->data[x-i][y+i]);
-						if (x >= i && y >= i)
-							neighbours[6] = (&this->data[x-i][y-i]);
-						if (y >= i && x < this->width - i)
-							neighbours[7] = (&this->data[x+i][y-i]);
+						// if (x < this->width - i && y < this->height - i)
+						// 	neighbours[4] = (&this->data[x+i][y+i]);
+						// if (x >= i && y < this->height - i)
+						// 	neighbours[5] = (&this->data[x-i][y+i]);
+						// if (x >= i && y >= i)
+						// 	neighbours[6] = (&this->data[x-i][y-i]);
+						// if (y >= i && x < this->width - i)
+						// 	neighbours[7] = (&this->data[x+i][y-i]);
 
 						MapPoint * map_point = (&this->data[x][y]);
 						for (int i = 0 ; i <= 7 ; i++)
@@ -115,11 +115,15 @@ void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 
 void Map::draw_cone(int start_x, int start_y, int radius, int height)
 {
-	for (int h = 0 ; h < height ; h++)
-	for (int x = 0 ; x < this->width ; x++)
-	for (int y = 0 ; y < this->height ; y++)
+	float r = radius;
+	for (double h = 0 ; h < height ; h += 0.5)
 	{
-		if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (radius - h / 2) * (radius - h / 2))
-			this->data[x][y].terrain_height += 1;
+		r *= 0.99f;
+		for (double x = 0 ; x < this->width ; x += 1)
+		for (double y = 0 ; y < this->height ; y += 1)
+		{
+			if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (r) * (r))
+				this->data[x][y].terrain_height += 1;
+		}
 	}
 }

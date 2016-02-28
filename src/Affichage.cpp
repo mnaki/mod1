@@ -56,12 +56,12 @@ void	keyboard(unsigned char ch, int x, int y)
 		}
 			break;
 		case '=': {
-			CONFIG_ZOOM += 0.1f;
+			CONFIG_ZOOM *= 0.9f;
 			std::cout << "CONFIG_ZOOM = " << CONFIG_ZOOM << std::endl;
 		}
 			break ;
 		case '-': {
-			CONFIG_ZOOM -= 0.1f;
+			CONFIG_ZOOM /= 0.9f;
 			std::cout << "CONFIG_ZOOM = " << CONFIG_ZOOM << std::endl;
 		}
 			break ;
@@ -89,13 +89,13 @@ void	reshape(int w, int h)
 				0.0, 0.0, 0.0,	/* center is at (0,8,0) */
 				0.0, 1.0, 0.);	/* up is in postivie Y direction */
 
-/*	glViewport(0, 0, (GLsizei)1200, (GLsizei)800);
+	glViewport(0, 0, (GLsizei)1200, (GLsizei)800);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(-1.0, 1.0, -1.0, 1.0, 0.0, 90.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(1.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);*/
+	gluLookAt(1.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 GLfloat rotate = 36.0f;

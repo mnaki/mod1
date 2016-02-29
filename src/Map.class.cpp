@@ -115,12 +115,13 @@ void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 
 void Map::draw_cone(int start_x, int start_y, int radius, int height, bool reverse)
 {
-	float r = radius;
+	double r = radius;
+	// r *= 0.0059;
 	for (double h = 0 ; h < height ; h += 1)
 	{
-		r -= 0.99f;
-		for (double x = 0 ; x < this->width ; x += 0.03)
-		for (double y = 0 ; y < this->height ; y += 0.03)
+		r *= 1.0 - h / 100.0;
+		for (double x = 0 ; x < this->width ; x += 0.7)
+		for (double y = 0 ; y < this->height ; y += 0.7)
 		{
 			if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (r) * (r))
 			{

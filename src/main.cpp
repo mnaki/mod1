@@ -27,7 +27,7 @@ void scenario_rain_middle(Map & map)
 void scenario_srilanka(Map & map)
 {
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, map.height - 1, 2);
+		map.drop_water(x, 0, 10);
 	}
 }
 
@@ -37,13 +37,13 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(100, 100);
+	Map map(200, 200);
 	int radius = map.width / 8;
 	for (int y = 0; y < map.height - radius; y += radius * 2)
 	{
 		map.draw_cone(radius * 0, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 2, y + map.width / 2, radius, 500);
-		map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
+		// map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 6, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 8, y + map.width / 2, radius, 500);
 	}
@@ -67,8 +67,8 @@ int	main(int ac, char **av)
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				scenario_rain(map);
-				// scenario_srilanka(map);
+				// scenario_rain(map);
+				scenario_srilanka(map);
 				// scenario_rain_middle(map);
 				map.apply_gravity();
 				q.push(map);

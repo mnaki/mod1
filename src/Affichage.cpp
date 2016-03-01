@@ -128,33 +128,33 @@ void	display(void)
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-	for (GLfloat x = cmap.width - 2; x >= 0; x--)
+	for (GLfloat x = cmap.width - 2; x >= 1; x--)
 	{
 		glBegin(GL_TRIANGLE_STRIP);
-		for (GLfloat y = cmap.height - 2; y >= 0; y--)
+		for (GLfloat y = cmap.height - 2; y >= 1; y--)
 		{
 			if (cmap.data[x][y+1].water_level > 0)
 				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x][y+1].water_level) / (cmap.data[x][y+1].terrain_height + 1.001f) / 100.0f), 1.0f);
 			else
-				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
 			glVertex3f( x , y+1 , cmap.data[x][y+1].terrain_height + cmap.data[x][y+1].water_level );
 
 			if (cmap.data[x][y].water_level > 0)
 				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x][y].water_level) / (cmap.data[x][y].terrain_height + 1.001f) / 100.0f), 1.0f);
 			else
-				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
 			glVertex3f( x , y , cmap.data[x][y].terrain_height + cmap.data[x][y].water_level );
 
 			if (cmap.data[x+1][y+1].water_level > 0)
 				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x+1][y+1].water_level) / (cmap.data[x+1][y+1].terrain_height + 1.001f) / 100.0f), 1.0f);
 			else
-				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
 			glVertex3f( x+1 , y+1 , cmap.data[x+1][y+1].terrain_height + cmap.data[x+1][y+1].water_level );
 
 			if (cmap.data[x+1][y].water_level > 0)
 				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x+1][y].water_level) / (cmap.data[x+1][y].terrain_height + 1.001f) / 100.0f), 1.0f);
 			else
-				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
 			glVertex3f( x+1 , y , cmap.data[x+1][y].terrain_height + cmap.data[x+1][y].water_level );
 		}
 		glEnd();

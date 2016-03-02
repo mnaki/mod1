@@ -77,6 +77,19 @@ void	reshape(int w, int h)
 }
 
 GLfloat rotate = 30.0f;
+
+void set_color(Map const & cmap, int x, int y)
+{
+	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height) / (cmap.data[x][y].terrain_height + 30.0f);
+	if (cmap.data[x][y].water_level > 0)
+	{
+		glColor4f( 0, 0.4f / deepness, 0.9f / deepness, 0.9f );
+	}
+	else
+	{
+		glColor4f( 1.0f - 0.5f * deepness, 1.0f - 0.25f * deepness, 1.0f - 0.75f * deepness, 1.0f );
+	}
+}
 void	display(void)
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -133,28 +146,16 @@ void	display(void)
 		glBegin(GL_TRIANGLE_STRIP);
 		for (GLfloat y = cmap.height - 2; y >= 1; y--)
 		{
-			if (cmap.data[x][y+1].water_level > 0)
-				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x][y+1].water_level) / (cmap.data[x][y+1].terrain_height + 1.001f) / 100.0f), 1.0f);
-			else
-				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
+			set_color(cmap, x, y+1);
 			glVertex3f( x , y+1 , cmap.data[x][y+1].terrain_height + cmap.data[x][y+1].water_level );
 
-			if (cmap.data[x][y].water_level > 0)
-				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x][y].water_level) / (cmap.data[x][y].terrain_height + 1.001f) / 100.0f), 1.0f);
-			else
-				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
+			set_color(cmap, x, y);
 			glVertex3f( x , y , cmap.data[x][y].terrain_height + cmap.data[x][y].water_level );
 
-			if (cmap.data[x+1][y+1].water_level > 0)
-				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x+1][y+1].water_level) / (cmap.data[x+1][y+1].terrain_height + 1.001f) / 100.0f), 1.0f);
-			else
-				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
+			set_color(cmap, x+1, y+1);
 			glVertex3f( x+1 , y+1 , cmap.data[x+1][y+1].terrain_height + cmap.data[x+1][y+1].water_level );
 
-			if (cmap.data[x+1][y].water_level > 0)
-				glColor4f(0.0f, 0.0f, 1.0f - (1.0f * (cmap.data[x+1][y].water_level) / (cmap.data[x+1][y].terrain_height + 1.001f) / 100.0f), 1.0f);
-			else
-				glColor4f(0.01f * (cmap.data[x][y].terrain_height), 0.5f * (cmap.data[x][y].terrain_height+1.0f), 0.01f * (cmap.data[x][y].terrain_height+0.01f), 1.0f);
+			set_color(cmap, x+1, y);
 			glVertex3f( x+1 , y , cmap.data[x+1][y].terrain_height + cmap.data[x+1][y].water_level );
 		}
 		glEnd();

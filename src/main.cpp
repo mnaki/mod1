@@ -43,7 +43,7 @@ int	main(int ac, char **av)
 	{
 		map.draw_cone(radius * 0, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 2, y + map.width / 2, radius, 500);
-		// map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
+		map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 6, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 8, y + map.width / 2, radius, 500);
 	}
@@ -55,7 +55,7 @@ int	main(int ac, char **av)
 	w = (W_Width > map.width * LARGEUR_PIXEL) ? W_Width : map.width * LARGEUR_PIXEL;
 	h = (W_Height > map.height * LONGEUR_PIXEL) ? W_Height : map.height	* LONGEUR_PIXEL;
 	glutInitWindowSize(w, h);
-	glutCreateWindow("single triangle");
+	glutCreateWindow("Mod1");
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
@@ -68,8 +68,8 @@ int	main(int ac, char **av)
 			if (q.size() <= RENDER_AHEAD)
 			{
 				// scenario_rain(map);
-				scenario_srilanka(map);
-				// scenario_rain_middle(map);
+				// scenario_srilanka(map);
+				scenario_rain_middle(map);
 				map.apply_gravity();
 				q.push(map);
 			}

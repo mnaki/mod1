@@ -7,7 +7,7 @@ int      CONFIG_max_points = 40;        // Nombre de poygones par côté
 double   CONFIG_taille_carre = 0.1;    // Taille d'un poygone
 bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
 bool     CONFIG_SKIP_FRAMES = false;
-GLfloat  CONFIG_ZOOM = 0.03f;
+GLfloat  CONFIG_ZOOM = 0.003f;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -76,7 +76,7 @@ void	reshape(int w, int h)
 
 }
 
-GLfloat rotate = 30.0f;
+GLfloat rotate = 215.0f;
 
 void set_color(Map const & cmap, int x, int y)
 {

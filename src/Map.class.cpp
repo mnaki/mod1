@@ -27,34 +27,39 @@ void Map::apply_gravity(void)
 				{
 					for (int l = 0 ; l < this->data[x][y].water_level * (1.0 - this->viscosity) ; l++)
 					{
-						int const max_distance = 8;
-						MapPoint* neighbours[max_distance * 4] = { NULL };
+						MapPoint* neighbours[8] = { NULL };
 						int i = 1;
-						while (i < max_distance)
-						{
-							if (x < this->width - i)
-								neighbours[0 + i - 1 + i * max_distance] = (&this->data[x+i][y]);
-							if (x >= i)
-								neighbours[1 + i - 1 + i * max_distance] = (&this->data[x-i][y]);
-							if (y < this->height - i)
-								neighbours[2 + i - 1 + i * max_distance] = (&this->data[x][y+i]);
-							if (y >= i)
-								neighbours[3 + i - 1 + i * max_distance] = (&this->data[x][y-i]);
-							i++;
-						}
+						if (x < this->width - i)
+							neighbours[0] = (&this->data[x+i][y]);
+						if (x > i - 1)
+							neighbours[1] = (&this->data[x-i][y]);
+						if (y < this->height - i)
+							neighbours[2] = (&this->data[x][y+i]);
+						if (y > i - 1)
+							neighbours[3] = (&this->data[x][y-i]);
+
+						if (x < this->width - i && y < this->height - i)
+							neighbours[4] = (&this->data[x+i][y+i]);
+						if (x > i - 1 && y > i - 1)
+							neighbours[5] = (&this->data[x-i][y-i]);
+						if (y < this->height - i && x > i - 1)
+							neighbours[6] = (&this->data[x-i][y+i]);
+						if (y > i - 1 && x < this->width - i)
+							neighbours[7] = (&this->data[x+i][y-i]);
 
 						MapPoint * map_point = (&this->data[x][y]);
-						for (int i = max_distance * 4 - 1 ; i >= 0; i--)
+						for (int i = 0 ; i < 8 ; i++)
 						{
-							if (neighbours[i] != NULL
-								&& neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load()
-								     < map_point->terrain_height.load() + map_point->water_level.load())
+							if (neighbours[i] != NULL && neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
 							{
 								map_point = neighbours[i];
 							}
 						}
-						this->data[x][y].water_level--;
-						map_point->water_level++;
+						// if (this->data[x][y].water_level >= 1)
+						// {
+							this->data[x][y].water_level -= 1;
+							map_point->water_level += 1;
+						// }
 					}
 				}
 			}

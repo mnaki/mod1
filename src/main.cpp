@@ -7,11 +7,11 @@ std::mutex mtx;
 void scenario_rain(Map & map)
 {
 	double size = (map.width + map.height) / 2.0;
-	double maillage = 10.0;
-	static int make_it_rain = 1;
+	double maillage = 20.0;
+	static int make_it_rain = FPS;
 	for (size_t x = map.width - map.width / 2 - size / 2; x < map.width / 2 + size / 2; x += maillage) {
 		for (size_t y = map.height - map.height / 2 - size / 2; y < map.height / 2 + size / 2; y += maillage) {
-			map.drop_water(x, y, (make_it_rain % 10 == 0) * maillage * maillage);
+			map.drop_water(x, y, (make_it_rain % FPS == 0) * maillage * 50);
 		}
 	}
 	make_it_rain += 1;
@@ -27,7 +27,7 @@ void scenario_rain_middle(Map & map)
 void scenario_srilanka(Map & map)
 {
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, 0, 10);
+		map.drop_water(x, map.height / 2, 3);
 	}
 }
 
@@ -37,13 +37,13 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(200, 200);
+	Map map(400, 400);
 	int radius = map.width / 8;
 	for (int y = 0; y < map.height - radius; y += radius * 2)
 	{
 		map.draw_cone(radius * 0, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 2, y + map.width / 2, radius, 500);
-		map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
+		// map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 6, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 8, y + map.width / 2, radius, 500);
 	}
@@ -67,9 +67,9 @@ int	main(int ac, char **av)
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				// scenario_rain(map);
+				scenario_rain(map);
 				// scenario_srilanka(map);
-				scenario_rain_middle(map);
+				// scenario_rain_middle(map);
 				map.apply_gravity();
 				q.push(map);
 			}

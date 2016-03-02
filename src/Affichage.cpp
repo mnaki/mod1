@@ -141,10 +141,10 @@ void	display(void)
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-	for (GLfloat x = cmap.width - 2; x >= 1; x--)
+	for (GLfloat x = cmap.width - 2; x >= 0; x--)
 	{
 		glBegin(GL_TRIANGLE_STRIP);
-		for (GLfloat y = cmap.height - 2; y >= 1; y--)
+		for (GLfloat y = cmap.height - 2; y >= 0; y--)
 		{
 			set_color(cmap, x, y+1);
 			glVertex3f( x , y+1 , cmap.data[x][y+1].terrain_height + cmap.data[x][y+1].water_level );

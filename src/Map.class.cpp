@@ -21,11 +21,12 @@ void Map::apply_gravity(void)
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
 		threads[thread_id] = new std::thread([this, thread_id](){
+			double mult = 1.0;
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					for (int l = 0 ; l < this->data[x][y].water_level * (1.0 - this->viscosity) ; l++)
+					for (int l = 0 ; l < (this->data[x][y].water_level * (1.0 - this->viscosity)) / mult ; l++)
 					{
 						MapPoint* neighbours[8] = { NULL };
 						int i = 1;
@@ -38,14 +39,28 @@ void Map::apply_gravity(void)
 						if (y > i - 1)
 							neighbours[3] = (&this->data[x][y-i]);
 
-						if (x < this->width - i && y < this->height - i)
-							neighbours[4] = (&this->data[x+i][y+i]);
-						if (x > i - 1 && y > i - 1)
-							neighbours[5] = (&this->data[x-i][y-i]);
-						if (y < this->height - i && x > i - 1)
-							neighbours[6] = (&this->data[x-i][y+i]);
-						if (y > i - 1 && x < this->width - i)
-							neighbours[7] = (&this->data[x+i][y-i]);
+
+						// regarder une case de plus plus loin ?
+						// if (x < this->width - i && y < this->height - i)
+						// 	neighbours[4] = (&this->data[x+i][y+i]);
+						// if (x > i - 1 && y > i - 1)
+						// 	neighbours[5] = (&this->data[x-i][y-i]);
+						// if (y < this->height - i && x > i - 1)
+						// 	neighbours[6] = (&this->data[x-i][y+i]);
+						// if (y > i - 1 && x < this->width - i)
+						// 	neighbours[7] = (&this->data[x+i][y-i]);
+
+
+						// diagonales
+						// i = 2;
+						// if (x < this->width - i)
+						// 	neighbours[4] = (&this->data[x+i][y]);
+						// if (x > i - 1)
+						// 	neighbours[5] = (&this->data[x-i][y]);
+						// if (y < this->height - i)
+						// 	neighbours[6] = (&this->data[x][y+i]);
+						// if (y > i - 1)
+						// 	neighbours[7] = (&this->data[x][y-i]);
 
 						MapPoint * map_point = (&this->data[x][y]);
 						for (int i = 0 ; i < 8 ; i++)
@@ -55,11 +70,11 @@ void Map::apply_gravity(void)
 								map_point = neighbours[i];
 							}
 						}
-						// if (this->data[x][y].water_level >= 1)
-						// {
-							this->data[x][y].water_level -= 1;
-							map_point->water_level += 1;
-						// }
+						if (this->data[x][y].water_level >= mult)
+						{
+							this->data[x][y].water_level -= mult;
+							map_point->water_level += mult;
+						}
 					}
 				}
 			}
@@ -116,7 +131,7 @@ void Map::draw_cone(int start_x, int start_y, int radius, int height, bool rever
 	double r = radius;
 	for (double h = 0 ; h < height ; h += 10.0)
 	{
-		r *= 1.0 - (h / height) / 50.0;
+		r *= 1.0f - (h / height) / 20.0f;
 		for (double x = 0 ; x < this->width ; x += 1.0)
 		for (double y = 0 ; y < this->height ; y += 1.0)
 		{

@@ -27,7 +27,7 @@ void scenario_rain_middle(Map & map)
 void scenario_srilanka(Map & map)
 {
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, map.height / 2, 3);
+		map.drop_water(x, map.height-1, 2000);
 	}
 }
 
@@ -37,7 +37,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(400, 400);
+	Map map(200, 200);
 	int radius = map.width / 8;
 	for (int y = 0; y < map.height - radius; y += radius * 2)
 	{
@@ -48,7 +48,7 @@ int	main(int ac, char **av)
 		map.draw_cone(radius * 8, y + map.width / 2, radius, 500);
 	}
 	// map.elevate_rect(0, 0, map.width, map.height, 100);
-	map.viscosity = 0;
+	// map.viscosity = 0.8;
 
 	// creation de la fenetre en fonction de la map
 	int w = 0, h = 0;
@@ -60,18 +60,17 @@ int	main(int ac, char **av)
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
 
-  	q.push(map);
+	scenario_srilanka(map);
 	std::thread t([&map]{
 		while (1)
 		{
 			mtx.lock();
 			if (q.size() <= RENDER_AHEAD)
 			{
-				scenario_rain(map);
-				// scenario_srilanka(map);
+				q.push(map);
+				// scenario_rain(map);
 				// scenario_rain_middle(map);
 				map.apply_gravity();
-				q.push(map);
 			}
 			if (q.size() > 0)
 			{

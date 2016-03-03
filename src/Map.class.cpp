@@ -36,7 +36,7 @@ struct compare_points
 			return true;
 		else if (rhs == NULL)
 			return false;
-		return lhs->water_level.load() + lhs->terrain_height.load() < rhs->water_level.load() + rhs->terrain_height.load();
+		return lhs->water_level.load() + lhs->terrain_height.load() <= rhs->water_level.load() + rhs->terrain_height.load();
 	}
 };
 
@@ -48,7 +48,7 @@ void Map::apply_gravity(void)
 	{
 		threads[thread_id] = std::thread([this, thread_id](){
 			std::vector<MapPoint*> points;
-			points.reserve(8);
+			points.reserve(16);
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
@@ -56,23 +56,25 @@ void Map::apply_gravity(void)
 					points.clear();
 					if (this->data[x][y].water_level > 0)
 					{
-						if (x < width - 1)
-						points.push_back(&this->data[x+1][y]);
-						if (x < height - 1)
-						points.push_back(&this->data[x][y+1]);
-						if (x >= 1)
-						points.push_back(&this->data[x-1][y]);
-						if (y >= 1)
-						points.push_back(&this->data[x][y-1]);
+						for (int i = 1; i <= 3; i++) {
+							if (x < width - i)
+							points.push_back(&this->data[x+i][y]);
+							if (x < height - i)
+							points.push_back(&this->data[x][y+i]);
+							if (x >= i)
+							points.push_back(&this->data[x-i][y]);
+							if (y >= i)
+							points.push_back(&this->data[x][y-i]);
 
-						if (x >= 1 && y >= 1)
-						points.push_back(&this->data[x-1][y-1]);
-						if (x < width - 1 && y < height - 1)
-						points.push_back(&this->data[x+1][y+1]);
-						if (x >= 1 && y < height - 1)
-						points.push_back(&this->data[x-1][y+1]);
-						if (y >= 1 && x < width - 1)
-						points.push_back(&this->data[x+1][y-1]);
+							if (x >= i && y >= i)
+							points.push_back(&this->data[x-i][y-i]);
+							if (x < width - i && y < height - i)
+							points.push_back(&this->data[x+i][y+i]);
+							if (x >= i && y < height - i)
+							points.push_back(&this->data[x-i][y+i]);
+							if (y >= i && x < width - i)
+							points.push_back(&this->data[x+i][y-i]);
+						}
 
 						std::sort(points.begin(), points.end(), compare_points());
 						for (MapPoint* point : points)

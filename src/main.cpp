@@ -30,11 +30,9 @@ void scenario_rain_middle(Map & map)
 
 void scenario_srilanka(Map & map)
 {
-	static int make_it_rain = 1;
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, 0, (make_it_rain % 24 == 0) * 30);
+		map.drop_water(x, 0, 3);
 	}
-	make_it_rain += 1;
 }
 
 typedef enum map_e
@@ -44,7 +42,7 @@ typedef enum map_e
 	map_beach,
 } map_e;
 
-map_e current_map = map_volcano;
+map_e current_map = map_beach;
 
 int	main(int ac, char **av)
 {
@@ -58,12 +56,16 @@ int	main(int ac, char **av)
 		case map_beach: {
 			for (int y = 0; y < map.height + radius * 2; y += radius * 3)
 			{
-				map.draw_cone(radius * 0, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 2, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 4, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 6, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 8, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				// map.draw_cone(radius * 0, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				// map.draw_cone(radius * 2, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				// map.draw_cone(radius * 4, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				// map.draw_cone(radius * 6, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				// map.draw_cone(radius * 8, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
 			}
+			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 8, map.width/1.4);
+			map.draw_cone(map.width - radius * 5, map.height - radius * 4, map.height / 7, map.width/1.3);
+			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 6, map.width/1.2);
+			map.draw_cone(map.width - radius * 3, map.height - radius * 4, map.height / 5, map.width/1.1);
 		};
 		break;
 

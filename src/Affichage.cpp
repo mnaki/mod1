@@ -8,7 +8,8 @@ double   CONFIG_taille_carre = 0.1;    // Taille d'un poygone
 bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
 bool     CONFIG_SKIP_FRAMES = false;
 GLfloat  CONFIG_ZOOM = 0.003f;
-bool 	 CONFIG_PAUSE = false;
+int 	 CONFIG_PAUSE = 0;
+int 	 CONFIG_FPS = FPS;
 
 GLfloat rotate = 0;
 GLfloat target_rotate = 35.1f;
@@ -91,7 +92,7 @@ void	reshape(int w, int h)
 
 void set_color(Map const & cmap, int x, int y)
 {
-	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height) / (cmap.data[x][y].terrain_height + 30.0f);
+	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height) / (cmap.data[x][y].terrain_height + 40.0f);
 	if (cmap.data[x][y].water_level > 0)
 	{
 		glColor4f( 0, 0.4f / deepness, 0.9f / deepness, 0.75f );
@@ -114,10 +115,6 @@ void	display(void)
 	// glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 	// glLoadIdentity();
 
-	if (CONFIG_PAUSE)
-	{
-		return;
-	}
 	mtx.lock();
 	if (q.size() <= 0)
 	{
@@ -126,7 +123,12 @@ void	display(void)
 	}
 
 	Map cmap = q.back();
-	q.pop();
+
+	if (!CONFIG_PAUSE)
+	{
+		q.pop();
+	}
+
 	if (CONFIG_SKIP_FRAMES)
 	{
 		while (q.size() > 0)
@@ -138,7 +140,7 @@ void	display(void)
 
 
 	if (CONFIG_rotate)
-		rotate += 0.1f;
+		rotate -= 45.0f/16;
 
 	rotate += (target_rotate + - rotate) / 4;
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -185,6 +187,6 @@ void	display(void)
 
 	if (!CONFIG_SKIP_FRAMES)
 	{
-		usleep(1000000 / FPS);
+		usleep(1000000 / CONFIG_FPS);
 	}
 }

@@ -43,48 +43,48 @@ struct compare_points
 void Map::apply_gravity(void)
 {
 	std::thread threads[MAX_THREAD_COUNT];
+	static std::vector<MapPoint*> points[MAX_THREAD_COUNT];
 
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
 		threads[thread_id] = std::thread([this, thread_id](){
-			std::vector<MapPoint*> points;
-			points.reserve(8 * 3);
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					points.clear();
-					if (this->data[x][y].water_level > 0)
+					points[thread_id].clear();
+					if (this->data[x][y].water_level >= 1)
 					{
-						for (int i = 1; i <= 3; i++) {
+						for (int i = 1; i <= 3; i++)
+						{
 							if (x < width - i)
-							points.push_back(&this->data[x+i][y]);
+							points[thread_id].push_back(&this->data[x+i][y]);
 							if (x < height - i)
-							points.push_back(&this->data[x][y+i]);
+							points[thread_id].push_back(&this->data[x][y+i]);
 							if (x >= i)
-							points.push_back(&this->data[x-i][y]);
+							points[thread_id].push_back(&this->data[x-i][y]);
 							if (y >= i)
-							points.push_back(&this->data[x][y-i]);
+							points[thread_id].push_back(&this->data[x][y-i]);
 
 							if (x >= i && y >= i)
-							points.push_back(&this->data[x-i][y-i]);
+							points[thread_id].push_back(&this->data[x-i][y-i]);
 							if (x < width - i && y < height - i)
-							points.push_back(&this->data[x+i][y+i]);
+							points[thread_id].push_back(&this->data[x+i][y+i]);
 							if (x >= i && y < height - i)
-							points.push_back(&this->data[x-i][y+i]);
+							points[thread_id].push_back(&this->data[x-i][y+i]);
 							if (y >= i && x < width - i)
-							points.push_back(&this->data[x+i][y-i]);
+							points[thread_id].push_back(&this->data[x+i][y-i]);
 						}
 
-						std::sort(points.begin(), points.end(), compare_points());
-						for (MapPoint* point : points)
+						std::sort(points[thread_id].begin(), points[thread_id].end(), compare_points());
+						for (MapPoint* point : points[thread_id])
 						{
 							if (point == NULL)
 								continue;
 							if (resistance(*point) < resistance(x, y))
 							{
-								this->data[x][y].water_level--;
-								point->water_level++;
+								this->data[x][y].water_level -= 1;
+								point->water_level += 1;
 							}
 						}
 					}

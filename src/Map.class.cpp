@@ -7,7 +7,7 @@ void Map::drop_water(int x, int y, int quantity)
 	this->data[x][y].water_level += quantity;
 }
 
-Map::Map(int width, int height) : width(width), height(height)
+Map::Map(int width, int height, std::string scenario) : width(width), height(height), scenario(scenario)
 {
 	this->data.resize(width);
 	for (int x = 0 ; x < width ; x++)
@@ -58,22 +58,22 @@ void Map::apply_gravity(void)
 						for (int i = 1; i <= 3; i++)
 						{
 							if (x < width - i)
-							points[thread_id].push_back(&this->data[x+i][y]);
+								points[thread_id].push_back(&this->data[x+i][y]);
 							if (x < height - i)
-							points[thread_id].push_back(&this->data[x][y+i]);
+								points[thread_id].push_back(&this->data[x][y+i]);
 							if (x >= i)
-							points[thread_id].push_back(&this->data[x-i][y]);
+								points[thread_id].push_back(&this->data[x-i][y]);
 							if (y >= i)
-							points[thread_id].push_back(&this->data[x][y-i]);
+								points[thread_id].push_back(&this->data[x][y-i]);
 
 							if (x >= i && y >= i)
-							points[thread_id].push_back(&this->data[x-i][y-i]);
+								points[thread_id].push_back(&this->data[x-i][y-i]);
 							if (x < width - i && y < height - i)
-							points[thread_id].push_back(&this->data[x+i][y+i]);
+								points[thread_id].push_back(&this->data[x+i][y+i]);
 							if (x >= i && y < height - i)
-							points[thread_id].push_back(&this->data[x-i][y+i]);
+								points[thread_id].push_back(&this->data[x-i][y+i]);
 							if (y >= i && x < width - i)
-							points[thread_id].push_back(&this->data[x+i][y-i]);
+								points[thread_id].push_back(&this->data[x+i][y-i]);
 						}
 
 						std::sort(points[thread_id].begin(), points[thread_id].end(), compare_points());

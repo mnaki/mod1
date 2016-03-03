@@ -6,7 +6,7 @@
 #    By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/02/23 20:57:43 by bgauci            #+#    #+#              #
-#    Updated: 2016/02/25 18:42:42 by bgauci           ###   ########.fr        #
+#    Updated: 2016/03/03 17:32:01 by bgauci           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,11 +35,13 @@ FLAGS_ERROR =	-Wall -Wextra -Wno-deprecated-declarations
 SRC =		$(SRCDIR)/main.cpp				\
 			$(SRCDIR)/Affichage.cpp			\
 			$(SRCDIR)/Map.class.cpp			\
+			$(SRCDIR)/parser.cpp			\
 			$(SRCDIR)/MapPoint.class.cpp
 
 OBJ =		$(OBJDIR)/main.o				\
 			$(OBJDIR)/Affichage.o			\
 			$(OBJDIR)/Map.class.o			\
+			$(OBJDIR)/parser.o				\
 			$(OBJDIR)/MapPoint.class.o
 
 OBJECTS  := $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)

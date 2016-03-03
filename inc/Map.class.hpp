@@ -29,8 +29,9 @@ class Map
     	std::vector< std::vector<MapPoint> > data;
     	int const width;
     	int const height;
+		std::string scenario;
 
-    	Map(int width = 1, int height = 1);
+    	Map(int width = 1, int height = 1, std::string scenario = "strilanka");
     	~Map() = default;
     	void drop_water(int x, int y, int quantity);
     	void apply_gravity(void);

@@ -1,6 +1,7 @@
 #include "Map.class.hpp"
 #include <limits>
 #include <cstddef>
+#include <random>
 
 void Map::drop_water(int x, int y, int quantity)
 {
@@ -48,33 +49,47 @@ void Map::apply_gravity(void)
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
 		threads[thread_id] = std::thread([this, thread_id](){
+			std::random_device rd;
+			std::mt19937 g(rd());
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					if (this->data[x][y].water_level >= 1)
+					if (this->data[x][y].water_level > 1)
 					{
 						points[thread_id].clear();
 						for (int i = 1; i <= 3; i++)
 						{
 							if (x < width - i)
-								points[thread_id].push_back(&this->data[x+i][y]);
+								if (resistance(this->data[x+i][y]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x+i][y]);
 							if (x < height - i)
-								points[thread_id].push_back(&this->data[x][y+i]);
+								if (resistance(this->data[x][y+i]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x][y+i]);
 							if (x >= i)
-								points[thread_id].push_back(&this->data[x-i][y]);
+								if (resistance(this->data[x-i][y]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x-i][y]);
 							if (y >= i)
-								points[thread_id].push_back(&this->data[x][y-i]);
+								if (resistance(this->data[x][y-i]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x][y-i]);
 
 							if (x >= i && y >= i)
-								points[thread_id].push_back(&this->data[x-i][y-i]);
+								if (resistance(this->data[x-i][y-i]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x-i][y-i]);
 							if (x < width - i && y < height - i)
-								points[thread_id].push_back(&this->data[x+i][y+i]);
+								if (resistance(this->data[x+i][y+i]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x+i][y+i]);
 							if (x >= i && y < height - i)
-								points[thread_id].push_back(&this->data[x-i][y+i]);
+								if (resistance(this->data[x-i][y+i]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x-i][y+i]);
 							if (y >= i && x < width - i)
-								points[thread_id].push_back(&this->data[x+i][y-i]);
+								if (resistance(this->data[x+i][y-i]) < resistance(x, y))
+									points[thread_id].push_back(&this->data[x+i][y-i]);
 						}
+						if (points[thread_id].size() == 0)
+							continue;
+
+						std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
 						std::sort(points[thread_id].begin(), points[thread_id].end(), compare_points());
 						for (MapPoint* point : points[thread_id])
 						{

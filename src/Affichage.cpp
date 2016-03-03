@@ -12,7 +12,7 @@ int 	 CONFIG_PAUSE = 0;
 int 	 CONFIG_FPS = FPS;
 
 GLfloat rotate = 0;
-GLfloat target_rotate = 35.1f;
+GLfloat target_rotate = 45.0f;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -72,7 +72,7 @@ void	keyboard(unsigned char ch, int x, int y)
 		break ;
 		case 'r':
 		case 'R': {
-			target_rotate += 45.0f;
+			target_rotate += 45.0f * 2;
 		}
 		break;
 		case 'P':
@@ -87,7 +87,6 @@ void	keyboard(unsigned char ch, int x, int y)
 
 void	reshape(int w, int h)
 {
-
 }
 
 void set_color(Map const & cmap, int x, int y)
@@ -104,16 +103,15 @@ void set_color(Map const & cmap, int x, int y)
 }
 void	display(void)
 {
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	// glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);				// Black Background
-	// glClearDepth(40.0f);									// Depth Buffer Setup
-	// glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
-	glDisable (GL_DEPTH_TEST);
-	glDepthFunc(GL_NEVER);
-	// glDepthFunc(GL_LEQUAL);
-	// glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
-	// glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	// glFrustum(-1.0, 1.0, -1.0, 1.0, 5, 100);
+	// glOrtho(-1.0, 1.0, -1.0, 1.0, 5, 100);
 
 	mtx.lock();
 	if (q.size() <= 0)
@@ -126,23 +124,28 @@ void	display(void)
 
 	if (!CONFIG_PAUSE)
 	{
-		q.pop();
-	}
-
-	if (CONFIG_SKIP_FRAMES)
-	{
-		while (q.size() > 0)
+		if (CONFIG_SKIP_FRAMES)
+		{
+			while (q.size() > 0)
+			{
+				q.pop();
+			}
+		}
+		else
 		{
 			q.pop();
 		}
 	}
+
 	mtx.unlock();
 
 
 	if (CONFIG_rotate)
-		rotate -= 45.0f/16;
+	{
+		rotate -= 45.0f/8.0f;
+	}
 
-	rotate += (target_rotate + - rotate) / 4;
+	rotate += (target_rotate + - rotate) / 8.0f;
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
@@ -150,14 +153,12 @@ void	display(void)
 	glLoadIdentity();
 	glTranslatef(xpos, ypos, zpos);
 
-	glRotatef(-80.0f,0.0f,0.0f,0.0f);
-	glRotatef(0.0f,0.0f,0.0f,1.0f);
-	glRotatef(-30.0f,1.0f,0.0f,0.0f);
-	glRotatef(10.0f + rotate,0.0f,0.0f,1.0f);
 	glScalef(CONFIG_ZOOM, CONFIG_ZOOM, CONFIG_ZOOM);
+	glRotatef(45.0f, -1.0f, 0.0f, 0.0f);
+	glRotatef(rotate, 0.0f, 0.0f, 1.0f);
 
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	for (GLfloat x = 0; x < cmap.width - 1; x++)
 	{
@@ -178,10 +179,6 @@ void	display(void)
 		}
 		glEnd();
 	}
-
-
-
-
 
 	glFlush();
 

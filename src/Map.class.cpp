@@ -42,8 +42,8 @@ struct compare_points
 
 void Map::apply_gravity(void)
 {
-	std::thread threads[MAX_THREAD_COUNT];
-	static std::vector<MapPoint*> points[MAX_THREAD_COUNT];
+	std::thread threads[(int)MAX_THREAD_COUNT];
+	static std::vector<MapPoint*> points[(int)MAX_THREAD_COUNT];
 
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
@@ -52,9 +52,9 @@ void Map::apply_gravity(void)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					points[thread_id].clear();
 					if (this->data[x][y].water_level >= 1)
 					{
+						points[thread_id].clear();
 						for (int i = 1; i <= 3; i++)
 						{
 							if (x < width - i)
@@ -75,17 +75,12 @@ void Map::apply_gravity(void)
 							if (y >= i && x < width - i)
 							points[thread_id].push_back(&this->data[x+i][y-i]);
 						}
-
 						std::sort(points[thread_id].begin(), points[thread_id].end(), compare_points());
 						for (MapPoint* point : points[thread_id])
 						{
-							if (point == NULL)
-								continue;
-							if (resistance(*point) < resistance(x, y))
-							{
-								this->data[x][y].water_level -= 1;
-								point->water_level += 1;
-							}
+							int r = resistance(*point) < resistance(x, y);
+							this->data[x][y].water_level -= r;
+							point->water_level += r;
 						}
 					}
 				}
@@ -120,8 +115,7 @@ std::string Map::to_string(void) const
 				color = BLUE;
 			if (this->data[x][y].water_level > 35)
 				color = BLACK;
-			ss << color << "█";
-			// ss << color << this->data[x][y].water_level + this->data[x][y].terrain_height << " ";
+			ss << color << this->data[x][y].water_level + this->data[x][y].terrain_height << std::string(" ");
 		}
 		ss << std::endl;
 	}

@@ -8,21 +8,19 @@ void scenario_rain(Map & map)
 {
 	double size = (map.width + map.height) / 2.0;
 	double maillage = 20.0;
-	static int make_it_rain = FPS / maillage;
 	for (size_t x = map.width - map.width / 2 - size / 2; x < map.width / 2 + size / 2; x += maillage) {
 		for (size_t y = map.height - map.height / 2 - size / 2; y < map.height / 2 + size / 2; y += maillage) {
-			map.drop_water(x, y, (make_it_rain % FPS == 0) * maillage * maillage);
+			map.drop_water(x, y, 2);
 		}
 	}
-	make_it_rain += 1;
 }
 
 void scenario_rain_middle(Map & map)
 {
 	static int make_it_rain = 1;
-	for (int x = map.width / 2 - map.width / 10; x < map.width / 2 + map.width / 10; x++) {
-		for (int y = map.height / 2 - map.height / 10; y < map.height / 2 + map.height / 10; y++) {
-			map.drop_water(x, y, (make_it_rain % 40 == 0) * 4);
+	for (int x = map.width / 2 - map.width / 100; x < map.width / 2 + map.width / 100; x++) {
+		for (int y = map.height / 2 - map.height / 100; y < map.height / 2 + map.height / 100; y++) {
+			map.drop_water(x, y, 1);
 		}
 	}
 	make_it_rain += 1;
@@ -43,7 +41,7 @@ typedef enum map_e
 	map_montagne
 } map_e;
 
-map_e current_map = map_montagne;
+map_e current_map = map_volcano;
 
 int	main(int ac, char **av)
 {
@@ -94,24 +92,42 @@ int	main(int ac, char **av)
 	std::thread t([&map]{
 		while (1)
 		{
-			mtx.lock();
-			if (q.size() <= RENDER_AHEAD)
+			try
 			{
-				scenario_rain(map);
-				// scenario_rain_middle(map);
-				// scenario_srilanka(map);
-				map.apply_gravity();
-				q.push(map);
+				mtx.lock();
+				if (q.size() <= RENDER_AHEAD)
+				{
+					mtx.unlock();
+					if (current_map == map_montagne)
+						scenario_rain(map);
+					if (current_map == map_volcano)
+						scenario_rain_middle(map);
+					if (current_map == map_beach)
+						scenario_srilanka(map);
+					map.apply_gravity();
+					mtx.lock();
+					q.push(map);
+					mtx.unlock();
+				}
+				else if (q.size() > 0)
+				{
+					mtx.unlock();
+					glutPostRedisplay();
+				}
+				else
+				{
+					mtx.unlock();
+				}
 			}
-			if (q.size() > 0)
+			catch (std::exception & e)
 			{
-				glutPostRedisplay();
+				std::cout << e.what() << std::endl;
 			}
-			mtx.unlock();
+			
 		}
 	});
+	t.detach();
  	glutMainLoop();
-	t.join();
 	(void)ac;
 	(void)av;
 	return 0;

@@ -8,8 +8,10 @@ double   CONFIG_taille_carre = 0.1;    // Taille d'un poygone
 bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
 bool     CONFIG_SKIP_FRAMES = false;
 GLfloat  CONFIG_ZOOM = 0.003f;
+bool 	 CONFIG_PAUSE = false;
 
-GLfloat rotate = 35.1f;
+GLfloat rotate = 0;
+GLfloat target_rotate = 35.1f;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -69,9 +71,13 @@ void	keyboard(unsigned char ch, int x, int y)
 		break ;
 		case 'r':
 		case 'R': {
-			rotate += 45.0f;
+			target_rotate += 45.0f;
 		}
 		break;
+		case 'P':
+		case 'p': {
+			CONFIG_PAUSE = !CONFIG_PAUSE;
+		}
 		default:
 		break;
 	}
@@ -108,7 +114,10 @@ void	display(void)
 	// glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 	// glLoadIdentity();
 
-
+	if (CONFIG_PAUSE)
+	{
+		return;
+	}
 	mtx.lock();
 	if (q.size() <= 0)
 	{
@@ -130,6 +139,8 @@ void	display(void)
 
 	if (CONFIG_rotate)
 		rotate += 0.1f;
+
+	rotate += (target_rotate + - rotate) / 4;
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer

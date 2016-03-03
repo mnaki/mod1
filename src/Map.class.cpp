@@ -36,7 +36,7 @@ struct compare_points
 			return true;
 		else if (rhs == NULL)
 			return false;
-		return lhs->water_level.load() + lhs->terrain_height.load() <= rhs->water_level.load() + rhs->terrain_height.load();
+		return lhs->water_level.load() + lhs->terrain_height.load() < rhs->water_level.load() + rhs->terrain_height.load();
 	}
 };
 
@@ -48,7 +48,7 @@ void Map::apply_gravity(void)
 	{
 		threads[thread_id] = std::thread([this, thread_id](){
 			std::vector<MapPoint*> points;
-			points.reserve(16);
+			points.reserve(8 * 3);
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
@@ -149,9 +149,9 @@ void Map::draw_cone(int start_x, int start_y, int radius, int height, bool rever
 			if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (r) * (r))
 			{
 				if (reverse)
-					this->data[x][y].terrain_height -= 1;
+					this->data[x][y].terrain_height -= h/100;
 				else
-					this->data[x][y].terrain_height += 1;
+					this->data[x][y].terrain_height += h/100;
 			}
 		}
 	}

@@ -20,8 +20,8 @@ void scenario_rain(Map & map)
 void scenario_rain_middle(Map & map)
 {
 	static int make_it_rain = 1;
-	for (size_t x = map.width / 2 - map.width / 10; x < map.width / 2 + map.width / 10; x++) {
-		for (size_t y = map.height / 2 - map.height / 10; y < map.height / 2 + map.height / 10; y++) {
+	for (int x = map.width / 2 - map.width / 10; x < map.width / 2 + map.width / 10; x++) {
+		for (int y = map.height / 2 - map.height / 10; y < map.height / 2 + map.height / 10; y++) {
 			map.drop_water(x, y, (make_it_rain % 40 == 0) * 4);
 		}
 	}
@@ -30,12 +30,21 @@ void scenario_rain_middle(Map & map)
 
 void scenario_srilanka(Map & map)
 {
+	static int make_it_rain = 1;
 	for (int x = 0; x < map.width; x++) {
-		for (int y = (map.height - 1) / 20; y >= 0; y--) {
-			map.drop_water(x, map.height - y - 1, 1);
-		}
+		map.drop_water(x, 0, (make_it_rain % 24 == 0) * 30);
 	}
+	make_it_rain += 1;
 }
+
+typedef enum map_e
+{
+	map_custom,
+	map_volcano,
+	map_beach,
+} map_e;
+
+map_e current_map = map_volcano;
 
 int	main(int ac, char **av)
 {
@@ -43,18 +52,27 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(300, 300);
+	Map map(400, 400);
 	int radius = map.width / 8;
-	for (int y = 0; y < map.height + radius * 2; y += radius * 3)
-	{
-		map.draw_cone(radius * 0, y - map.width / 2, radius, 500);
-		map.draw_cone(radius * 2, y - map.width / 2, radius, 500);
-		map.draw_cone(radius * 4, y - map.width / 2, radius, 500);
-		map.draw_cone(radius * 6, y - map.width / 2, radius, 500);
-		map.draw_cone(radius * 8, y - map.width / 2, radius, 500);
-	}
-	// map.elevate_rect(0, 0, map.width, map.height, 100);
+	switch (current_map) {
+		case map_beach: {
+			for (int y = 0; y < map.height + radius * 2; y += radius * 3)
+			{
+				map.draw_cone(radius * 0, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				map.draw_cone(radius * 2, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				map.draw_cone(radius * 4, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				map.draw_cone(radius * 6, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				map.draw_cone(radius * 8, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+			}
+		};
+		break;
 
+		case map_volcano: {
+			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 4, map.width - 0);
+			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 6, map.width / 1.3, true);
+		}
+		break;
+	}
 	// creation de la fenetre en fonction de la map
 	int w = 0, h = 0;
 	w = (W_Width > map.width * LARGEUR_PIXEL) ? W_Width : map.width * LARGEUR_PIXEL;
@@ -66,11 +84,6 @@ int	main(int ac, char **av)
   	glutKeyboardFunc(keyboard);
 
 
-	// for (int x = 0; x < map.width; x++) {
-	// 	for (int y = (map.height - 1) / 8; y >= 0; y--) {
-	// 		map.drop_water(x, map.height - y - 1, 200);
-	// 	}
-	// }
 	std::thread t([&map]{
 		while (1)
 		{
@@ -88,7 +101,6 @@ int	main(int ac, char **av)
 				glutPostRedisplay();
 			}
 			mtx.unlock();
-			// usleep(10000);
 		}
 	});
  	glutMainLoop();

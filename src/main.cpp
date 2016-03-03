@@ -11,7 +11,7 @@ void scenario_rain(Map & map)
 	static int make_it_rain = FPS;
 	for (size_t x = map.width - map.width / 2 - size / 2; x < map.width / 2 + size / 2; x += maillage) {
 		for (size_t y = map.height - map.height / 2 - size / 2; y < map.height / 2 + size / 2; y += maillage) {
-			map.drop_water(x, y, (make_it_rain % FPS == 0) * maillage * 50);
+			map.drop_water(x, y, (make_it_rain % FPS == 0) * maillage * 1);
 		}
 	}
 	make_it_rain += 1;
@@ -20,14 +20,18 @@ void scenario_rain(Map & map)
 void scenario_rain_middle(Map & map)
 {
 	static int make_it_rain = 1;
-	map.drop_water(map.width / 2, map.height / 2, (make_it_rain % 20 == 0) * 10000);
+	for (size_t x = map.width / 2 - map.width / 10; x < map.width / 2 + map.width / 10; x++) {
+		for (size_t y = map.height / 2 - map.height / 10; y < map.height / 2 + map.height / 10; y++) {
+			map.drop_water(x, y, (make_it_rain % 40 == 0) * 4);
+		}
+	}
 	make_it_rain += 1;
 }
 
 void scenario_srilanka(Map & map)
 {
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, map.height-1, 2000);
+		map.drop_water(x, map.height - 1, 1);
 	}
 }
 
@@ -43,12 +47,11 @@ int	main(int ac, char **av)
 	{
 		map.draw_cone(radius * 0, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 2, y + map.width / 2, radius, 500);
-		// map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
+		map.draw_cone(radius * 4, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 6, y + map.width / 2, radius, 500);
 		map.draw_cone(radius * 8, y + map.width / 2, radius, 500);
 	}
 	// map.elevate_rect(0, 0, map.width, map.height, 100);
-	// map.viscosity = 0.8;
 
 	// creation de la fenetre en fonction de la map
 	int w = 0, h = 0;
@@ -60,7 +63,6 @@ int	main(int ac, char **av)
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
 
-	scenario_srilanka(map);
 	std::thread t([&map]{
 		while (1)
 		{
@@ -68,8 +70,9 @@ int	main(int ac, char **av)
 			if (q.size() <= RENDER_AHEAD)
 			{
 				q.push(map);
-				// scenario_rain(map);
-				// scenario_rain_middle(map);
+				scenario_rain(map);
+				scenario_rain_middle(map);
+				scenario_srilanka(map);
 				map.apply_gravity();
 			}
 			if (q.size() > 0)
@@ -77,7 +80,7 @@ int	main(int ac, char **av)
 				glutPostRedisplay();
 			}
 			mtx.unlock();
-			usleep(10000);
+			// usleep(10000);
 		}
 	});
  	glutMainLoop();

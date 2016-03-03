@@ -1,4 +1,6 @@
 #include "Map.class.hpp"
+#include <limits>
+#include <cstddef>
 
 void Map::drop_water(int x, int y, int quantity)
 {
@@ -14,66 +16,74 @@ Map::Map(int width, int height) : width(width), height(height)
 	}
 }
 
+int Map::resistance(int x, int y)
+{
+	if (x < 0 || x >= this->width || y < 0 || y >= this->height)
+		return std::numeric_limits<int>::max();
+	return this->data[x][y].water_level.load() + this->data[x][y].terrain_height.load();
+}
+
+int Map::resistance(MapPoint const & point)
+{
+	return point.water_level.load() + point.terrain_height.load();
+}
+
+struct compare_points
+{
+	inline bool operator() (const MapPoint * lhs, const MapPoint * rhs)
+	{
+		if (lhs == NULL)
+			return true;
+		else if (rhs == NULL)
+			return false;
+		return lhs->water_level.load() + lhs->terrain_height.load() < rhs->water_level.load() + rhs->terrain_height.load();
+	}
+};
+
 void Map::apply_gravity(void)
 {
-	std::thread * threads[MAX_THREAD_COUNT];
+	std::thread threads[MAX_THREAD_COUNT];
 
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
-		threads[thread_id] = new std::thread([this, thread_id](){
-			double mult = 1.0;
+		threads[thread_id] = std::thread([this, thread_id](){
+			std::vector<MapPoint*> points;
+			points.reserve(8);
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					for (int l = 0 ; l < (this->data[x][y].water_level * (1.0 - this->viscosity)) / mult ; l++)
+					points.clear();
+					if (this->data[x][y].water_level > 0)
 					{
-						MapPoint* neighbours[8] = { NULL };
-						int i = 1;
-						if (x < this->width - i)
-							neighbours[0] = (&this->data[x+i][y]);
-						if (x > i - 1)
-							neighbours[1] = (&this->data[x-i][y]);
-						if (y < this->height - i)
-							neighbours[2] = (&this->data[x][y+i]);
-						if (y > i - 1)
-							neighbours[3] = (&this->data[x][y-i]);
+						if (x < width - 1)
+						points.push_back(&this->data[x+1][y]);
+						if (x < height - 1)
+						points.push_back(&this->data[x][y+1]);
+						if (x >= 1)
+						points.push_back(&this->data[x-1][y]);
+						if (y >= 1)
+						points.push_back(&this->data[x][y-1]);
 
+						if (x >= 1 && y >= 1)
+						points.push_back(&this->data[x-1][y-1]);
+						if (x < width - 1 && y < height - 1)
+						points.push_back(&this->data[x+1][y+1]);
+						if (x >= 1 && y < height - 1)
+						points.push_back(&this->data[x-1][y+1]);
+						if (y >= 1 && x < width - 1)
+						points.push_back(&this->data[x+1][y-1]);
 
-						// regarder une case de plus plus loin ?
-						// if (x < this->width - i && y < this->height - i)
-						// 	neighbours[4] = (&this->data[x+i][y+i]);
-						// if (x > i - 1 && y > i - 1)
-						// 	neighbours[5] = (&this->data[x-i][y-i]);
-						// if (y < this->height - i && x > i - 1)
-						// 	neighbours[6] = (&this->data[x-i][y+i]);
-						// if (y > i - 1 && x < this->width - i)
-						// 	neighbours[7] = (&this->data[x+i][y-i]);
-
-
-						// diagonales
-						// i = 2;
-						// if (x < this->width - i)
-						// 	neighbours[4] = (&this->data[x+i][y]);
-						// if (x > i - 1)
-						// 	neighbours[5] = (&this->data[x-i][y]);
-						// if (y < this->height - i)
-						// 	neighbours[6] = (&this->data[x][y+i]);
-						// if (y > i - 1)
-						// 	neighbours[7] = (&this->data[x][y-i]);
-
-						MapPoint * map_point = (&this->data[x][y]);
-						for (int i = 0 ; i < 8 ; i++)
+						std::sort(points.begin(), points.end(), compare_points());
+						for (MapPoint* point : points)
 						{
-							if (neighbours[i] != NULL && neighbours[i]->terrain_height.load() + neighbours[i]->water_level.load() < map_point->terrain_height.load() + map_point->water_level.load())
+							if (point == NULL)
+								continue;
+							if (resistance(*point) < resistance(x, y))
 							{
-								map_point = neighbours[i];
+								this->data[x][y].water_level--;
+								point->water_level++;
 							}
-						}
-						if (this->data[x][y].water_level >= mult)
-						{
-							this->data[x][y].water_level -= mult;
-							map_point->water_level += mult;
 						}
 					}
 				}
@@ -82,8 +92,7 @@ void Map::apply_gravity(void)
 	}
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
-		threads[thread_id]->join();
-		delete threads[thread_id];
+		threads[thread_id].join();
 	}
 }
 

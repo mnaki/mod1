@@ -29,7 +29,6 @@ class Map
     	std::vector< std::vector<MapPoint> > data;
     	int const width;
     	int const height;
-    	double viscosity = 0.0; // 0.0 = Liquide ; 1.0 = Solid
 
     	Map(int width = 1, int height = 1);
     	~Map() = default;
@@ -38,4 +37,6 @@ class Map
     	void elevate_rect(int x0, int y0, int x1, int y1, int value);
         void draw_cone(int start_x, int start_y, int radius, int height, bool reverse = false);
 	    std::string to_string(void) const;
+        int resistance(int x, int y);
+        int resistance(MapPoint const & point);
 };

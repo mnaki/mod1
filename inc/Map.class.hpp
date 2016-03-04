@@ -33,11 +33,12 @@ class Map
 
     	Map(int width = 1, int height = 1, std::string scenario = "strilanka");
     	~Map() = default;
-    	void drop_water(int x, int y, int quantity);
-    	void apply_gravity(void);
-    	void elevate_rect(int x0, int y0, int x1, int y1, int value);
-        void draw_cone(int start_x, int start_y, int radius, int height, bool reverse = false);
-	    std::string to_string(void) const;
-        int resistance(int x, int y);
-        int resistance(MapPoint const & point);
+    	void		drop_water(int x, int y, int quantity);
+		int			get_hauteur_max(void) const ;
+    	void		apply_gravity(void);
+    	void		elevate_rect(int x0, int y0, int x1, int y1, int value);
+        void		draw_cone(int start_x, int start_y, int radius, int height, bool reverse = false);
+	    std::string	to_string(void) const;
+        int			resistance(int x, int y);
+        int			resistance(MapPoint const & point);
 };

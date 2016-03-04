@@ -18,6 +18,15 @@ Map::Map(int width, int height, std::string scenario) : width(width), height(hei
 	}
 }
 
+int Map::get_hauteur_max(void) const
+{
+	int res = 0;
+	for (int i = 0 ; i < width ; i++)
+		for (int j = 0 ; j < height ; j++)
+			res = (res > data[i][j].terrain_height) ? res : (int)data[i][j].terrain_height;
+	return res;
+}
+
 int Map::resistance(int x, int y)
 {
 	if (x >= 0 && x < width - 1 && y >= 0 && y < height - 1)

@@ -119,19 +119,6 @@ int	main(int ac, char **av)
   	glutKeyboardFunc(keyboard);
   	glutIdleFunc(idle);
 
-  	// bordures nulles
-  	for (int x = 0; x < map.width; x++)
-  	{
-  		map.data[x][0].terrain_height = 0;
-  		map.data[x][map.height-1].terrain_height = 0;
-  	}
-
-  	for (int y = 0; y < map.height; y++)
-  	{
-  		map.data[0][y].terrain_height = 0;
-  		map.data[map.width-1][y].terrain_height = 0;
-  	}
-
 	std::thread t([&map]{
 		while (1)
 		{
@@ -141,6 +128,7 @@ int	main(int ac, char **av)
 				if (q.size() <= RENDER_AHEAD)
 				{
 					mtx.unlock();
+
 					if (current_map == map_montagne)
 						scenario_rain(map);
 					if (current_map == map_volcano)
@@ -151,6 +139,23 @@ int	main(int ac, char **av)
 						scenario_riviere(map);
 					map.apply_gravity();
 					mtx.lock();
+
+				  	// bordures nulles
+				  	for (int x = 0; x < map.width; x++)
+				  	{
+				  		map.data[x][0].terrain_height = 0;
+				  		map.data[x][map.height-1].terrain_height = 0;
+				  		map.data[x][0].water_level = 0;
+				  		map.data[x][map.height-1].water_level = 0;
+				  	}
+				  	for (int y = 0; y < map.height; y++)
+				  	{
+				  		map.data[0][y].terrain_height = 0;
+				  		map.data[map.width-1][y].terrain_height = 0;
+				  		map.data[0][y].water_level = 0;
+				  		map.data[map.width-1][y].water_level = 0;
+				  	}
+				  	//
 					q.push(map);
 				}
 				else if (q.size() > 0)

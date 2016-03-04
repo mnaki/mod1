@@ -29,6 +29,7 @@ class Map
     	std::vector< std::vector<MapPoint> > data;
     	int const width;
     	int const height;
+        int const conf_marge_bocal = 1;
 		std::string scenario;
 
     	Map(int width = 1, int height = 1, std::string scenario = "strilanka");

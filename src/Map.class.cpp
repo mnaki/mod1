@@ -79,24 +79,24 @@ void Map::apply_gravity(void)
 					{
 						points[thread_id].fill(NULL);
 						int k = 0;
-						for (int i = 1; i <= 1; i++)
+						for (int i = 1; i <= 1; i++) // 'i' etant la distance maximale de case adjacente a verifier
 						{
-							if ((x+i >= 0 && x+i < width - 1 && y >= 0 && y < height - 1) && resistance(this->data[x+i][y]) < resistance(x, y))
+							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x+i][y];
-							if ((x >= 0 && x < width - 1 && y+i >= 0 && y+i < height - 1) && resistance(this->data[x][y+i]) < resistance(x, y))
+							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y+i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x][y+i];
-							if ((x-i >= 0 && x-i < width - 1 && y >= 0 && y < height - 1) && resistance(this->data[x-i][y]) < resistance(x, y))
+							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x-i][y];
-							if ((x >= 0 && x < width - 1 && y-i >= 0 && y-i < height - 1) && resistance(this->data[x][y-i]) < resistance(x, y))
+							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y-i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x][y-i];
 
-							if ((x-i >= 0 && x-i < width - 1 && y-i >= 0 && y-i < height - 1) && resistance(this->data[x-i][y-i]) < resistance(x, y))
+							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x-i][y-i];
-							if ((x+i >= 0 && x+i < width - 1 && y+i >= 0 && y+i < height - 1) && resistance(this->data[x+i][y+i]) < resistance(x, y))
+							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x+i][y+i];
-							if ((x-i >= 0 && x-i < width - 1 && y+i >= 0 && y+i < height - 1) && resistance(this->data[x-i][y+i]) < resistance(x, y))
+							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x-i][y+i];
-							if ((x+i >= 0 && x+i < width - 1 && y-i >= 0 && y-i < height - 1) && resistance(this->data[x+i][y-i]) < resistance(x, y))
+							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x+i][y-i];
 						}
 						if (points[thread_id].size() == 0)

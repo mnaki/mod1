@@ -78,14 +78,14 @@ void	keyboard(unsigned char ch, int x, int y)
 
 void set_color(Map const & cmap, int x, int y)
 {
-	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height) / (cmap.data[x][y].terrain_height + 40.0f);
+	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height + 0.1f) / (cmap.data[x][y].terrain_height + 20.0f);
 	if (cmap.data[x][y].water_level > 0)
 	{
 		glColor4f( 0, 0.4f / deepness, 0.9f / deepness, 0.75f );
 	}
 	else
 	{
-		glColor4f( 1.0f - 0.5f * deepness, 1.0f - 0.25f * deepness, 1.0f - 0.75f * deepness, 1.0f );
+		glColor4f( 1.0f - 0.5f * deepness, 1.5f - 0.25f * deepness, 1.0f - 0.75f * deepness, 1.0f );
 	}
 }
 void	display(void)

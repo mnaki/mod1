@@ -145,7 +145,7 @@ int	main(int ac, char **av)
 						scenario_rain_middle(map);
 					if (current_map == map_beach)
 						scenario_srilanka(map);
-					if (scenario_riviere)
+					if (current_map == map_riviere)
 						scenario_riviere(map);
 					map.apply_gravity();
 					mtx.lock();

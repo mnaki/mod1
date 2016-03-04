@@ -2,6 +2,7 @@
 #include <limits>
 #include <cstddef>
 #include <random>
+#include <array>
 
 void Map::drop_water(int x, int y, int quantity)
 {

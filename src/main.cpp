@@ -26,8 +26,10 @@ void scenario_rain_middle(Map & map)
 
 void scenario_srilanka(Map & map)
 {
+	static int level_water = -1;
+	if (level_water == -1) {level_water = map.get_hauteur_max();}
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, map.height - 2, 3);
+		map.set_water(x, map.height - 2, level_water);
 	}
 }
 
@@ -49,7 +51,7 @@ typedef enum map_e
 	map_riviere
 } map_e;
 
-map_e current_map = map_riviere;
+map_e current_map = map_beach;
 
 int	main(int ac, char **av)
 {

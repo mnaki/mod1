@@ -29,7 +29,7 @@ void scenario_rain_middle(Map & map)
 void scenario_srilanka(Map & map)
 {
 	for (int x = 0; x < map.width; x++) {
-		map.drop_water(x, 0, 3);
+		map.drop_water(x, map.height - 2, 3);
 	}
 }
 
@@ -41,7 +41,7 @@ typedef enum map_e
 	map_montagne
 } map_e;
 
-map_e current_map = map_volcano;
+map_e current_map = map_beach;
 
 int	main(int ac, char **av)
 {
@@ -49,7 +49,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(400, 400);
+	Map map(200, 200);
 	int radius = map.width / 8;
 	switch (current_map) {
 		case map_beach: {

@@ -64,7 +64,7 @@ void Map::apply_gravity(void)
 					{
 						points[thread_id].fill(NULL);
 						int k = 0;
-						for (int i = 1; i <= 10; i++)
+						for (int i = 1; i <= 1; i++)
 						{
 							if ((x+i >= 0 && x+i < width - 1 && y >= 0 && y < height - 1) && resistance(this->data[x+i][y]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x+i][y];

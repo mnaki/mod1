@@ -17,13 +17,11 @@ void scenario_rain(Map & map)
 
 void scenario_rain_middle(Map & map)
 {
-	static int make_it_rain = 1;
-	for (int x = map.width / 2 - map.width / 100; x < map.width / 2 + map.width / 100; x++) {
-		for (int y = map.height / 2 - map.height / 100; y < map.height / 2 + map.height / 100; y++) {
+	for (int x = map.width / 2 - map.width / 70; x < map.width / 2 + map.width / 70; x++) {
+		for (int y = map.height / 2 - map.height / 70; y < map.height / 2 + map.height / 70; y++) {
 			map.drop_water(x, y, 1);
 		}
 	}
-	make_it_rain += 1;
 }
 
 void scenario_srilanka(Map & map)
@@ -33,15 +31,26 @@ void scenario_srilanka(Map & map)
 	}
 }
 
+void scenario_riviere(Map & map)
+{
+	map.drop_water(2, map.height / 1.95, 100);
+}
+
+void idle()
+{
+	sleep(0);
+}
+
 typedef enum map_e
 {
 	map_custom,
 	map_volcano,
 	map_beach,
-	map_montagne
+	map_montagne,
+	map_riviere
 } map_e;
 
-map_e current_map = map_beach;
+map_e current_map = map_riviere;
 
 int	main(int ac, char **av)
 {
@@ -53,20 +62,40 @@ int	main(int ac, char **av)
 	int radius = map.width / 8;
 	switch (current_map) {
 		case map_beach: {
-			for (int y = 0; y < map.height + radius * 2; y += radius * 3)
+			for (int y = 0; y < map.height + radius * 2; y += radius * 1.5)
 			{
-				map.draw_cone(radius * 0, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 2, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 4, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 6, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
-				map.draw_cone(radius * 8, y - map.height / 2, radius, rand() % map.width/2 + map.width/1.5);
+				map.draw_cone(radius * 0, y - map.height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 2, y - map.height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 4, y - map.height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 6, y - map.height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 8, y - map.height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+			}
+		};
+		break;
+
+		case map_riviere: {
+			int y = 0;
+			for (int i = map.width - 1; i >= 0; i--)
+			{
+				map.elevate_rect(i, 0, i+1, map.width - 1, y * 0.55);
+				y++;
+			}
+			map.draw_cone(0, 0, 50, 100);
+
+			for (int y = 0; y < map.height + radius * 2; y += radius * 1.5)
+			{
+				map.draw_cone(radius * 0, y - map.height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 2, y - map.height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 4, y - map.height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 6, y - map.height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
+				map.draw_cone(radius * 8, y - map.height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map.width/1.6 + map.width/1.5);
 			}
 		};
 		break;
 
 		case map_volcano: {
-			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 4, map.width - 0);
-			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 6, map.width / 1.3, true);
+			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 6, map.width / 1.1);
+			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 8, map.width / 1.3, true);
 		}
 		break;
 
@@ -87,7 +116,20 @@ int	main(int ac, char **av)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
+  	glutIdleFunc(idle);
 
+  	// bordures nulles
+  	for (int x = 0; x < map.width; x++)
+  	{
+  		map.data[x][0].terrain_height = 0;
+  		map.data[x][map.height-1].terrain_height = 0;
+  	}
+
+  	for (int y = 0; y < map.height; y++)
+  	{
+  		map.data[0][y].terrain_height = 0;
+  		map.data[map.width-1][y].terrain_height = 0;
+  	}
 
 	std::thread t([&map]{
 		while (1)
@@ -104,6 +146,8 @@ int	main(int ac, char **av)
 						scenario_rain_middle(map);
 					if (current_map == map_beach)
 						scenario_srilanka(map);
+					if (scenario_riviere)
+						scenario_riviere(map);
 					map.apply_gravity();
 					mtx.lock();
 					q.push(map);

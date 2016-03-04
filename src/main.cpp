@@ -35,7 +35,6 @@ void scenario_srilanka(Map & map)
 
 typedef enum map_e
 {
-	map_custom,
 	map_volcano,
 	map_beach,
 	map_montagne
@@ -85,7 +84,7 @@ int	main(int ac, char **av)
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
 	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
+//	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
 
 
@@ -107,23 +106,15 @@ int	main(int ac, char **av)
 					map.apply_gravity();
 					mtx.lock();
 					q.push(map);
-					mtx.unlock();
 				}
 				else if (q.size() > 0)
-				{
-					mtx.unlock();
 					glutPostRedisplay();
-				}
-				else
-				{
-					mtx.unlock();
-				}
+				mtx.unlock();
 			}
 			catch (std::exception & e)
 			{
 				std::cout << e.what() << std::endl;
 			}
-			
 		}
 	});
 	t.detach();

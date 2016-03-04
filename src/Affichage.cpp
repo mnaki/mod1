@@ -3,16 +3,12 @@
 
 #include <stdio.h>
 
-int      CONFIG_max_points = 40;        // Nombre de poygones par côté
-double   CONFIG_taille_carre = 0.1;    // Taille d'un poygone
-bool     CONFIG_rotate = false;         // Terrain qui tourne ou non
-bool     CONFIG_SKIP_FRAMES = false;
-GLfloat  CONFIG_ZOOM = 0.003f;
-int 	 CONFIG_PAUSE = 0;
-int 	 CONFIG_FPS = FPS;
-
-GLfloat rotate = 0;
-GLfloat target_rotate = 45.0f;
+bool	conf_rotate =		CONFIG_ROTATE;
+bool	conf_skip_frames =	CONFIG_SKIP_FRAMES;
+GLfloat	conf_zoom =			CONFIG_ZOOM;
+bool	conf_pause =		CONFIG_PAUSE;
+GLfloat rotate =			GLF_ROTATE;
+GLfloat target_rotate =		GLF_TARGET_ROTATE;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -24,69 +20,60 @@ float xpos = -0.5f, ypos=-0.5f, zpos = -0.0f;
 /* ARGSUSED1 */
 void	keyboard(unsigned char ch, int x, int y)
 {
+	x = ch; y = ch;
 	switch (ch)
 	{
 		case 27:             /* escape */
-		exit(0);
-		break;
+			exit(0);
+			break;
 		case 'w':
 		case 'W':
-		ypos+=0.1f;
-		glutPostRedisplay();
-		break;
+			ypos+=0.1f;
+			glutPostRedisplay();
+			break;
 		case 's':
 		case 'S':
-		ypos-=0.1f;
-		glutPostRedisplay();
-		break;
+			ypos-=0.1f;
+			glutPostRedisplay();
+			break;
 		case 'a':
 		case 'A':
-		xpos-=0.1f;
-		glutPostRedisplay();
-		break;
+			xpos-=0.1f;
+			glutPostRedisplay();
+			break;
 		case 'd':
 		case 'D':
-		xpos+=0.1f;
-		glutPostRedisplay();
-		break;
+			xpos+=0.1f;
+			glutPostRedisplay();
+			break;
 		case 'Q':
 		case 'q':
-		CONFIG_rotate = (CONFIG_rotate) ? false : true;
-		glutPostRedisplay();
-		break;
+			conf_rotate = (conf_rotate) ? false : true;
+			glutPostRedisplay();
+			break;
 		case 'X':
-		case 'x': {
-			CONFIG_SKIP_FRAMES = !CONFIG_SKIP_FRAMES;
-			std::cout << "CONFIG_SKIP_FRAMES = " << CONFIG_SKIP_FRAMES << std::endl;
-		}
-		break;
-		case '=': {
-			CONFIG_ZOOM *= 0.9f;
-			std::cout << "CONFIG_ZOOM = " << CONFIG_ZOOM << std::endl;
-		}
-		break ;
-		case '-': {
-			CONFIG_ZOOM /= 0.9f;
-			std::cout << "CONFIG_ZOOM = " << CONFIG_ZOOM << std::endl;
-		}
-		break ;
+		case 'x':
+			conf_skip_frames = !conf_skip_frames;
+			std::cout << "conf_skip_frames = " << conf_skip_frames << std::endl;
+			break;
+		case '=':
+			conf_zoom *= 0.9f;
+			std::cout << "conf_zoom = " << conf_zoom << std::endl;
+			break ;
+		case '-':
+			conf_zoom /= 0.9f;
+			std::cout << "conf_zoom = " << conf_zoom << std::endl;
+			break ;
 		case 'r':
-		case 'R': {
+		case 'R':
 			target_rotate += 45.0f * 2;
-		}
-		break;
+			break;
 		case 'P':
-		case 'p': {
-			CONFIG_PAUSE = !CONFIG_PAUSE;
-		}
+		case 'p':
+			conf_pause = !conf_pause;
 		default:
-		break;
+				  break;
 	}
-}
-
-
-void	reshape(int w, int h)
-{
 }
 
 void set_color(Map const & cmap, int x, int y)
@@ -117,14 +104,15 @@ void	display(void)
 	if (q.size() <= 0)
 	{
 		mtx.unlock();
+		std::cout << "no frame" << std::endl;
 		return ;
 	}
 
 	Map cmap = q.back();
 
-	if (!CONFIG_PAUSE)
+	if (!conf_pause)
 	{
-		if (CONFIG_SKIP_FRAMES)
+		if (conf_skip_frames)
 		{
 			while (q.size() > 0)
 			{
@@ -140,7 +128,7 @@ void	display(void)
 	mtx.unlock();
 
 
-	if (CONFIG_rotate)
+	if (conf_rotate)
 	{
 		rotate -= 45.0f/8.0f;
 	}
@@ -153,7 +141,7 @@ void	display(void)
 	glLoadIdentity();
 	glTranslatef(xpos, ypos, zpos);
 
-	glScalef(CONFIG_ZOOM, CONFIG_ZOOM, CONFIG_ZOOM);
+	glScalef(conf_zoom, conf_zoom, conf_zoom);
 	glRotatef(45.0f, -1.0f, 0.0f, 0.0f);
 	glRotatef(rotate, 0.0f, 0.0f, 1.0f);
 
@@ -182,7 +170,7 @@ void	display(void)
 
 	glFlush();
 
-	if (!CONFIG_SKIP_FRAMES)
+	if (!conf_skip_frames)
 	{
 		usleep(1000000 / CONFIG_FPS);
 	}

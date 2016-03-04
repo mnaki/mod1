@@ -23,6 +23,18 @@
 #define LARGEUR_PIXEL	1
 #define LONGEUR_PIXEL	1
 
-void	reshape(int w, int h);
+#define CONFIG_max_points	40		// int			// Nombre de poygones par côté
+#define CONFIG_taille_carre	0.1		// double		// Taille d'un poygone
+#define CONFIG_FPS 			FPS		// int
+
+#define CONFIG_ROTATE		false	// bool			// Terrain qui tourne ou non
+#define CONFIG_SKIP_FRAMES	false	// bool
+#define CONFIG_ZOOM			0.003f	// GLfloat
+#define CONFIG_PAUSE		0		// int
+
+#define GLF_ROTATE			0 // GLfloat
+#define GLF_TARGET_ROTATE	45.0f //GLfloat
+
+//void	reshape(int w, int h);
 void	display(void);
 void	keyboard(unsigned char ch, int x, int y);

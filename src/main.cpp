@@ -19,17 +19,17 @@ void scenario_rain_middle(Map & map)
 {
 	for (int x = map.width / 2 - map.width / 70; x < map.width / 2 + map.width / 70; x++) {
 		for (int y = map.height / 2 - map.height / 70; y < map.height / 2 + map.height / 70; y++) {
-			map.drop_water(x, y, 1);
+			map.drop_water(x, y, 2);
 		}
 	}
 }
 
 void scenario_srilanka(Map & map)
 {
-	static int level_water = -1;
-	if (level_water == -1) {level_water = map.get_hauteur_max();}
+	// static int level_water = -1;
+	// if (level_water == -1) {level_water = map.get_hauteur_max();}
 	for (int x = 0; x < map.width; x++) {
-		map.set_water(x, map.height - 2, level_water);
+		map.set_water(x, map.height - 2, 10);
 	}
 }
 
@@ -51,7 +51,7 @@ typedef enum map_e
 	map_riviere
 } map_e;
 
-map_e current_map = map_beach;
+map_e current_map = map_riviere;
 
 int	main(int ac, char **av)
 {
@@ -59,8 +59,8 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(150, 150);
-	int radius = map.width / 8;
+	Map map(190, 190);
+	int radius = map.width / 10.0;
 	switch (current_map) {
 		case map_beach: {
 			for (int y = 0; y < map.height + radius * 2; y += radius * 1.5)
@@ -95,8 +95,8 @@ int	main(int ac, char **av)
 		break;
 
 		case map_volcano: {
-			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 6, map.width / 1.1);
-			map.draw_cone(map.width - radius * 4, map.height - radius * 4, map.height / 8, map.width / 1.3, true);
+			map.draw_cone(map.width - radius * 5, map.height - radius * 5, map.height / 6, map.width / 1.1);
+			map.draw_cone(map.width - radius * 5, map.height - radius * 5, map.height / 8, map.width / 1.3, true);
 		}
 		break;
 

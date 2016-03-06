@@ -18,7 +18,7 @@ OBJDIR   = obj
 
 # all flags
 FLAGS_INCLUDES = -I$(INCDIR)
-FLAGS_OPTI = -Ofast
+FLAGS_OPTI = -O3
 CFLAGS = $(FLAGS_ERROR) $(FLAGS_INCLUDES) -std=gnu++11 $(FLAGS_OPTI) $(DEFS)
 ifeq ($(DEFS),-D__LINUX__)
                 LFLAGS = $(CFLAGS) -lGL -lglut -lGLU -lX11 -lm -lrt -lpthread

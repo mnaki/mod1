@@ -1,5 +1,6 @@
 #include "Affichage.hpp"
 #include "general.hpp"
+#include "parser.hpp"
 
 std::queue<Map> q;
 std::mutex mtx;
@@ -43,71 +44,20 @@ void idle()
 	sleep(0);
 }
 
-typedef enum map_e
-{
-	map_volcano,
-	map_beach,
-	map_montagne,
-	map_riviere
-} map_e;
-
-map_e current_map = map_riviere;
-
 int	main(int ac, char **av)
 {
 	// initiation du programe
 	glutInit(&ac, av);
 
-	// creation de la map
-	Map *map = new Map(190, 190);
-	int radius = map->width / 10.0;
-	switch (current_map) {
-		case map_beach: {
-			for (int y = 0; y < map->height + radius * 2; y += radius * 1.5)
-			{
-				map->draw_cone(radius * 0, y - map->height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 2, y - map->height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 4, y - map->height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 6, y - map->height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 8, y - map->height / 2,  rand() % radius * 1.5 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-			}
-		};
-		break;
-
-		case map_riviere: {
-			int y = 0;
-			for (int i = map->width - 1; i >= 0; i--)
-			{
-				map->elevate_rect(i, 0, i+1, map->width - 1, y * 0.25);
-				y++;
-			}
-			map->draw_cone(0, 0, 50, 100);
-
-			for (int y = 0; y < map->height + radius * 2; y += radius * 1.5)
-			{
-				map->draw_cone(radius * 0, y - map->height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 2, y - map->height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 4, y - map->height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 6, y - map->height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-				map->draw_cone(radius * 8, y - map->height / 2,  rand() % radius * 1.4 + radius * 1, rand() % map->width/1.6 + map->width/1.5);
-			}
-		};
-		break;
-
-		case map_volcano: {
-			map->draw_cone(map->width - radius * 5, map->height - radius * 5, map->height / 6, map->width / 1.1);
-			map->draw_cone(map->width - radius * 5, map->height - radius * 5, map->height / 8, map->width / 1.3, true);
-		}
-		break;
-
-		case map_montagne: {
-			map->draw_cone(map->width - radius * 4, map->height - radius * 4, map->height / 8, map->width/1.4);
-			map->draw_cone(map->width - radius * 5, map->height - radius * 4, map->height / 7, map->width/1.3);
-			map->draw_cone(map->width - radius * 4, map->height - radius * 4, map->height / 6, map->width/1.2);
-			map->draw_cone(map->width - radius * 3, map->height - radius * 4, map->height / 5, map->width/1.1);
-		}
-		break;
+	Map *map;
+	if (ac != 2)
+	{
+		std::cout << "usage : mod1 fichier.map" << std::endl;
+		return 0;
 	}
+
+	map = init_from_fichier(av[1]);
+
 	// creation de la fenetre en fonction de la map
 	int w = 0, h = 0;
 	w = (W_Width > map->width * LARGEUR_PIXEL) ? W_Width : map->width * LARGEUR_PIXEL;
@@ -115,7 +65,6 @@ int	main(int ac, char **av)
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
 	glutDisplayFunc(display);
-//	glutReshapeFunc(reshape);
   	glutKeyboardFunc(keyboard);
   	glutIdleFunc(idle);
 
@@ -128,15 +77,24 @@ int	main(int ac, char **av)
 				if (q.size() <= RENDER_AHEAD)
 				{
 					mtx.unlock();
-
-					if (current_map == map_montagne)
-						scenario_rain(map);
-					if (current_map == map_volcano)
-						scenario_rain_middle(map);
-					if (current_map == map_beach)
-						scenario_srilanka(map);
-					if (current_map == map_riviere)
-						scenario_riviere(map);
+					
+					switch(map->scenario)
+					{
+						case 0:
+							scenario_rain(map);
+							break;
+						case 1:
+							scenario_rain_middle(map);
+							break;
+						case 2:
+							scenario_srilanka(map);
+							break;
+						case 3:
+							scenario_riviere(map);
+							break;
+						default:
+							scenario_rain(map);
+					}
 					map->apply_gravity();
 					mtx.lock();
 

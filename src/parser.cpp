@@ -2,6 +2,9 @@
 #include <fstream>
 #include "parser.hpp"
 
+#define WIDTH 200
+#define HEIGHT 200
+
 Map *init_from_fichier(std::string s)
 {
 	std::ifstream fichier(s, std::ios::in);
@@ -9,47 +12,46 @@ Map *init_from_fichier(std::string s)
 	if (fichier)
 	{
 		std::string contenu;
-		int width = 0, height = 0;
-
-		getline(fichier, contenu); // width
-		width = std::stoi(contenu);
-		std::cout << width << std::endl;
-
-		getline(fichier, contenu); // height
-		height = std::stoi(contenu);
-		std::cout << height << std::endl;
+		Map *map;
 
 		getline(fichier, contenu); // scenario
-		std::cout << contenu << std::endl;
 
-		Map *map = new Map(width, height, contenu);
+		try {map = new Map(WIDTH, HEIGHT, std::stoi(contenu));}
+		catch (std::invalid_argument) {std::cout << "19" << std::endl;exit(1);}
 
-		getline(fichier, contenu, ' '); // start_x
-		std::cout << "[" << contenu << "]" << std::endl;
+		getline(fichier, contenu, ' '); // x
 
 		while (fichier.eof() == false)
 		{
-			int start_x, start_y, radius, height;
+			int x, y, radius, height;
 
-			start_x = std::stoi(contenu);
-			getline(fichier, contenu, ' '); // start_y
-			std::cout << contenu << std::endl;
-			start_y = std::stoi(contenu);
+			try {x = std::stoi(contenu);}
+			catch (std::invalid_argument) {std::cout << "30" << std::endl;exit(1);}
+			
+			getline(fichier, contenu, ' '); // y
+			try {y = std::stoi(contenu);}
+			catch (std::invalid_argument) {std::cout << "34" << std::endl;exit(1);}
+			
 			getline(fichier, contenu, ' '); // radius
-			std::cout << contenu << std::endl;
-			radius = std::stoi(contenu);
-			getline(fichier, contenu, ' '); // height
-			std::cout << contenu << std::endl;
-			height = std::stoi(contenu);
-			getline(fichier, contenu);		// reverse (bool)
-			std::cout << contenu << std::endl;
-			if (contenu == "true")
-				map->draw_cone(start_x, start_y, radius, height, true);
-			else
-				map->draw_cone(start_x, start_y, radius, height, false);
+			try {radius = std::stoi(contenu);}
+			catch (std::invalid_argument) {std::cout << "38" << std::endl;exit(1);}
+			
+			getline(fichier, contenu, '\n'); // hauteur
+			try {height = std::stoi(contenu);}
+			catch (std::invalid_argument) {std::cout << "42" << std::endl;exit(1);}
 		
-			getline(fichier, contenu, ' '); // start_x
-			std::cout << "[" << contenu << "]" << std::endl;
+			if (height < 0)
+			{
+				std::cout << x << "	" << y << "	" << radius << "	" << height << std::endl;
+				map->draw_cone(x, y, radius, height * -1, true);
+			}
+			else
+			{
+				std::cout << x << "	" << y << "	" << radius << "	" << height << std::endl;
+				map->draw_cone(x, y, radius, height, false);
+			}
+		
+			getline(fichier, contenu, ' '); // x
 		}
 
 		fichier.close();

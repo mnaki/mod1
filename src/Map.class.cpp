@@ -14,7 +14,7 @@ void Map::set_water(int x, int y, int value)
 	this->data[x][y].water_level = value;
 }
 
-Map::Map(int width, int height, std::string scenario) : width(width), height(height), scenario(scenario)
+Map::Map(int width, int height, int scenario) : width(width), height(height), scenario(scenario)
 {
 	this->data.resize(width);
 	for (int x = 0 ; x < width ; x++)

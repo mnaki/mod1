@@ -35,7 +35,7 @@ void scenario_srilanka(Map * map)
 
 void scenario_riviere(Map * map)
 {
-	map->drop_water(30, map->height / 4.01, 1);
+	map->drop_water(30, map->height / 4.01, 10);
 }
 
 void idle()

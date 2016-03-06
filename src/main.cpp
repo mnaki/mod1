@@ -3,11 +3,12 @@
 
 std::queue<Map> q;
 std::mutex mtx;
+extern bool pour_water;
 
 void scenario_rain(Map * map)
 {
-	double size = (map->width + map->height) / 2.0;
-	double maillage = 10.0;
+	float size = (map->width + map->height) / 2.0;
+	float maillage = 10.0;
 	for (size_t x = map->width - map->width / 2 - size / 2; x < map->width / 2 + size / 2; x += maillage) {
 		for (size_t y = map->height - map->height / 2 - size / 2; y < map->height / 2 + size / 2; y += maillage) {
 			map->drop_water(x, y, 1);
@@ -19,17 +20,17 @@ void scenario_rain_middle(Map * map)
 {
 	for (int x = map->width / 2 - map->width / 70; x < map->width / 2 + map->width / 70; x++) {
 		for (int y = map->height / 2 - map->height / 70; y < map->height / 2 + map->height / 70; y++) {
-			map->drop_water(x, y, 2);
+			map->drop_water(x+10, y+50, 2);
 		}
 	}
 }
 
 void scenario_srilanka(Map * map)
 {
-	// static int level_water = -1;
-	// if (level_water == -1) {level_water = map->get_hauteur_max();}
+	static int level_water = -1;
+	if (level_water == -1) {level_water = map->get_hauteur_max();}
 	for (int x = 0; x < map->width; x++) {
-		map->drop_water(x, map->height - 2, 0.1);
+		map->set_water(x, map->height - 2, level_water);
 	}
 }
 
@@ -51,7 +52,7 @@ typedef enum map_e
 	map_riviere
 } map_e;
 
-map_e current_map = map_beach;
+map_e current_map = map_volcano;
 
 int	main(int ac, char **av)
 {
@@ -75,8 +76,8 @@ int	main(int ac, char **av)
 		break;
 
 		case map_riviere: {
-			int y = 0;
-			for (int i = map->width - 1; i >= 0; i--)
+			float y = 0;
+			for (float i = map->width - 1; i >= 0; i--)
 			{
 				map->elevate_rect(i, 0, i+1, map->width - 1, y * 0.25);
 				y++;
@@ -95,8 +96,8 @@ int	main(int ac, char **av)
 		break;
 
 		case map_volcano: {
-			map->draw_cone(map->width - radius * 5, map->height - radius * 5, map->height / 6, map->width / 1.1);
-			map->draw_cone(map->width - radius * 5, map->height - radius * 5, map->height / 8, map->width / 1.3, true);
+			map->draw_cone(map->width - radius * 5, map->height - radius * 5, map->height / 6, map->width / 1.5);
+			map->draw_cone(map->width - radius * 5, map->height - radius * 5, map->height / 10, map->width / 1.45, true);
 		}
 		break;
 
@@ -129,14 +130,17 @@ int	main(int ac, char **av)
 				{
 					mtx.unlock();
 
-					if (current_map == map_montagne)
+					if (pour_water)
+					{
+						if (current_map == map_montagne)
 						scenario_rain(map);
-					if (current_map == map_volcano)
+						if (current_map == map_volcano)
 						scenario_rain_middle(map);
-					if (current_map == map_beach)
+						if (current_map == map_beach)
 						scenario_srilanka(map);
-					if (current_map == map_riviere)
+						if (current_map == map_riviere)
 						scenario_riviere(map);
+					}
 					map->apply_gravity();
 					mtx.lock();
 

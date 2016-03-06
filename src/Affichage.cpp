@@ -9,6 +9,7 @@ GLfloat	conf_zoom =			CONFIG_ZOOM;
 bool	conf_pause =		CONFIG_PAUSE;
 GLfloat rotate =			GLF_ROTATE;
 GLfloat target_rotate =		GLF_TARGET_ROTATE;
+bool    pour_water =          false;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -71,8 +72,10 @@ void	keyboard(unsigned char ch, int x, int y)
 		case 'P':
 		case 'p':
 			conf_pause = !conf_pause;
+		case ' ':
+			pour_water = !pour_water;
 		default:
-				  break;
+			break;
 	}
 }
 

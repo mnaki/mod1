@@ -53,68 +53,71 @@ struct compare_points
 {
 	inline bool operator() (const MapPoint * lhs, const MapPoint * rhs)
 	{
-		if (lhs == NULL)
+		if (lhs == NULL && rhs != NULL)
 			return false;
-		if (rhs == NULL)
+		else if (lhs != NULL && rhs == NULL)
+			return true;
+		else if (lhs == NULL && rhs == NULL)
 			return false;
-		return lhs->water_level.load() + lhs->terrain_height.load() < rhs->water_level.load() + rhs->terrain_height.load();
+		return lhs->water_level.load() + lhs->terrain_height.load() <= rhs->water_level.load() + rhs->terrain_height.load();
 	}
 };
+
+#define MAX_LOOKUP_DISTANCE 1
 
 void Map::apply_gravity(void)
 {
 	std::thread threads[(int)MAX_THREAD_COUNT];
-	static std::array<MapPoint*,8*8> points[(int)MAX_THREAD_COUNT];
+	static std::array<MapPoint*,MAX_LOOKUP_DISTANCE*8> points[(int)MAX_THREAD_COUNT];
+	static std::random_device rd;
+	static std::mt19937 g(rd());
 
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
 		threads[thread_id] = std::thread([this, thread_id](){
-			std::random_device rd;
-			std::mt19937 g(rd());
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					for (size_t l = 0; l < points[thread_id].size(); l++)
+					int k = points[thread_id].size()*5.0f;
+					for (float l = 0; l < k; l++)
 					{
-						if (this->data[x][y].water_level > 1)
+						points[thread_id].fill(NULL);
+						k = 0;
+						points[thread_id][k++] = &this->data[x][y];
+						for (int i = 1; i <= MAX_LOOKUP_DISTANCE; i++) // 'i' etant la distance maximale de case adjacente a verifier
 						{
-							points[thread_id].fill(NULL);
-							int k = 0;
-							points[thread_id][k++] = &this->data[x][y];
-							for (int i = 1; i <= 1; i++) // 'i' etant la distance maximale de case adjacente a verifier
-							{
-								if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x+i][y];
-								if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y+i]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x][y+i];
-								if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x-i][y];
-								if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y-i]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x][y-i];
+							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x+i][y];
+							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y+i]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x][y+i];
+							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x-i][y];
+							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y-i]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x][y-i];
 
-								// if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
-								// 	points[thread_id][k++] = &this->data[x-i][y-i];
-								// if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
-								// 	points[thread_id][k++] = &this->data[x+i][y+i];
-								// if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
-								// 	points[thread_id][k++] = &this->data[x-i][y+i];
-								// if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
-								// 	points[thread_id][k++] = &this->data[x+i][y-i];
-							}
-							std::sort(std::begin(points[thread_id]), std::end(points[thread_id]), compare_points());
-							std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
-							std::reverse(std::begin(points[thread_id]), std::end(points[thread_id]));
-							for (MapPoint* point : points[thread_id])
+							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x-i][y-i];
+							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x+i][y+i];
+							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x-i][y+i];
+							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
+								points[thread_id][k++] = &this->data[x+i][y-i];
+						}
+						// std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
+						// std::sort(std::begin(points[thread_id]), std::end(points[thread_id]), compare_points());
+						// std::reverse(std::begin(points[thread_id]), std::end(points[thread_id]));
+						for (MapPoint* point : points[thread_id])
+						{
+							if (point != NULL)
 							{
-								if (point != NULL && this->data[x][y].water_level > 0.0f)
-								{
-									this->data[x][y].water_level = this->data[x][y].water_level - 1.0f;
-									point->water_level = point->water_level + 1.0f;
-								}
+								float diff = (this->data[x][y].water_level > point->water_level);
+								this->data[x][y].water_level = this->data[x][y].water_level - diff / 10.0f;
+								point->water_level = point->water_level + diff / 10.0f;
 							}
 						}
-					}
+				}
 				}
 			}
 		});
@@ -154,7 +157,7 @@ std::string Map::to_string(void) const
 	return ss.str();
 }
 
-void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
+void Map::elevate_rect(int x0, int y0, int x1, int y1, float value)
 {
 	int width = x1 - x0;
 	int height = y1 - y0;

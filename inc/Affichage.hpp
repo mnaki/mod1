@@ -32,8 +32,8 @@
 #define CONFIG_ZOOM			0.003f	// GLfloat
 #define CONFIG_PAUSE		0		// int
 
-#define GLF_ROTATE			0 // GLfloat
-#define GLF_TARGET_ROTATE	45.0f //GLfloat
+#define GLF_ROTATE			0.0f // GLfloat
+#define GLF_TARGET_ROTATE	-45.0f //GLfloat
 
 //void	reshape(int w, int h);
 void	display(void);

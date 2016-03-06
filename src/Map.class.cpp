@@ -56,7 +56,7 @@ struct compare_points
 		if (lhs == NULL)
 			return false;
 		if (rhs == NULL)
-			return false;
+			return true;
 		return lhs->water_level.load() + lhs->terrain_height.load() < rhs->water_level.load() + rhs->terrain_height.load();
 	}
 };
@@ -79,7 +79,8 @@ void Map::apply_gravity(void)
 					{
 						points[thread_id].fill(NULL);
 						int k = 0;
-						for (int i = 1; i <= 1; i++) // 'i' etant la distance maximale de case adjacente a verifier
+						points[thread_id][k++] = &this->data[x][y];
+						for (int i = 1; i <= 2; i++) // 'i' etant la distance maximale de case adjacente a verifier
 						{
 							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x+i][y];
@@ -90,26 +91,25 @@ void Map::apply_gravity(void)
 							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y-i]) < resistance(x, y))
 								points[thread_id][k++] = &this->data[x][y-i];
 
-							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x-i][y-i];
-							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x+i][y+i];
-							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x-i][y+i];
-							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x+i][y-i];
+							// if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
+							// 	points[thread_id][k++] = &this->data[x-i][y-i];
+							// if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
+							// 	points[thread_id][k++] = &this->data[x+i][y+i];
+							// if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
+							// 	points[thread_id][k++] = &this->data[x-i][y+i];
+							// if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
+							// 	points[thread_id][k++] = &this->data[x+i][y-i];
 						}
-						if (points[thread_id].size() == 0)
-							continue;
 						std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
 						std::sort(std::begin(points[thread_id]), std::end(points[thread_id]), compare_points());
 						for (MapPoint* point : points[thread_id])
 						{
-							if (point == NULL)
-								continue ;
-							int r = resistance(*point) < resistance(x, y);
-							this->data[x][y].water_level -= r;
-							point->water_level += r;
+							if (point != NULL)
+							{
+								double r = (resistance(x, y) > resistance(*point));
+								this->data[x][y].water_level -= r;
+								point->water_level += r;
+							}
 						}
 					}
 				}

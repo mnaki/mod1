@@ -35,7 +35,7 @@ void scenario_srilanka(Map & map)
 
 void scenario_riviere(Map & map)
 {
-	map.drop_water(2, map.height / 1.95, 100);
+	map.drop_water(30, map.height / 4.01, 1);
 }
 
 void idle()
@@ -59,7 +59,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map map(200, 200);
+	Map map(150, 150);
 	int radius = map.width / 8;
 	switch (current_map) {
 		case map_beach: {
@@ -78,7 +78,7 @@ int	main(int ac, char **av)
 			int y = 0;
 			for (int i = map.width - 1; i >= 0; i--)
 			{
-				map.elevate_rect(i, 0, i+1, map.width - 1, y * 0.55);
+				map.elevate_rect(i, 0, i+1, map.width - 1, y * 0.25);
 				y++;
 			}
 			map.draw_cone(0, 0, 50, 100);

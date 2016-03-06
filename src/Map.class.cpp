@@ -79,7 +79,7 @@ void Map::apply_gravity(void)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					float k = points[thread_id].size()*10.0f;
+					float k = points[thread_id].size() - 1;
 					for (float l = 0; l < k; l++)
 					{
 						points[thread_id].fill(NULL);
@@ -112,8 +112,8 @@ void Map::apply_gravity(void)
 						{
 							if (point != NULL && this->data[x][y].water_level > 0.0f && resistance(*point) < resistance(this->data[x][y]))
 							{
-								this->data[x][y].water_level = this->data[x][y].water_level - 0.001f * k;
-								point->water_level = point->water_level + 0.001f * k;
+								this->data[x][y].water_level = this->data[x][y].water_level - 0.01f * k;
+								point->water_level = point->water_level + 0.01f * k;
 							}
 						}
 					}

@@ -63,12 +63,15 @@ struct compare_points
 	}
 };
 
-#define MAX_LOOKUP_DISTANCE 2
+typedef struct toto
+{
+	int i;
+	int j;
+} tata;
 
 void Map::apply_gravity(void)
 {
 	std::thread threads[(int)MAX_THREAD_COUNT];
-	static std::array<MapPoint*,MAX_LOOKUP_DISTANCE*8> points[(int)MAX_THREAD_COUNT];
 	static std::random_device rd;
 	static std::mt19937 g(rd());
 
@@ -77,44 +80,32 @@ void Map::apply_gravity(void)
 		threads[thread_id] = std::thread([this, thread_id](){
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
+				std::vector<tata*> points;
+				for (int i = 1 ; i <= 1 ; i++)
+				{
+					tata *a;
+					a = new tata();	a->i = i;	a->j = 0;	points.push_back(a);
+					a = new tata();	a->i = 0;	a->j = i;	points.push_back(a);
+					a = new tata();	a->i = -i;	a->j = 0;	points.push_back(a);
+					a = new tata();	a->i = 0;	a->j = -i;	points.push_back(a);
+
+					a = new tata();	a->i = -i;	a->j = -i;	points.push_back(a);
+					a = new tata();	a->i = i;	a->j = i;	points.push_back(a);
+					a = new tata();	a->i = -i;	a->j = i;	points.push_back(a);
+					a = new tata();	a->i = i;	a->j = -i;	points.push_back(a);
+				}
+
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					float k = points[thread_id].size() - 1;
-					for (float l = 0; l < k; l++)
+					float old_val = 0;
+					while (this->data[x][y].water_level > 0 && this->data[x][y].water_level != old_val)
 					{
-						points[thread_id].fill(NULL);
-						k = 0;
-						points[thread_id][k++] = &this->data[x][y];
-						for (int i = 1; i <= MAX_LOOKUP_DISTANCE; i++) // 'i' etant la distance maximale de case adjacente a verifier
+						old_val = this->data[x][y].water_level;
+						std::shuffle(points.begin(), points.end(), g);
+						for (int pression = 1 ; pression < this->data[x][y].water_level + 1 ; pression++)
 						{
-							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x+i][y];
-							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y+i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x][y+i];
-							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y >= 0 + conf_marge_bocal && y < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x-i][y];
-							if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y-i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x][y-i];
-
-							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x-i][y-i];
-							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x+i][y+i];
-							if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x-i][y+i];
-							if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
-								points[thread_id][k++] = &this->data[x+i][y-i];
-						}
-						// std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
-						// std::sort(std::begin(points[thread_id]), std::end(points[thread_id]), compare_points());
-						// std::reverse(std::begin(points[thread_id]), std::end(points[thread_id]));
-						for (MapPoint* point : points[thread_id])
-						{
-							if (point != NULL && this->data[x][y].water_level > 0.0f && resistance(*point) < resistance(this->data[x][y]))
-							{
-								this->data[x][y].water_level = this->data[x][y].water_level - 0.01f * k;
-								point->water_level = point->water_level + 0.01f * k;
-							}
+							for (auto iter = points.begin(); iter != points.end(); ++iter)
+								ecoulement_unitaire(x, y, (*iter)->i * pression, (*iter)->j * pression);
 						}
 					}
 				}
@@ -127,6 +118,15 @@ void Map::apply_gravity(void)
 	}
 }
 
+void	Map::ecoulement_unitaire(int x, int y, int i, int j)
+{
+	if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+j >= 0 + conf_marge_bocal && y+j < height - (1 + conf_marge_bocal))
+			&& resistance(this->data[x+i][y+j]) < resistance(x, y))
+	{
+		this->data[x][y].water_level = this->data[x][y].water_level - 0.1f;
+		this->data[x+i][y+j].water_level = this->data[x+i][y+j].water_level + 0.1f;
+	}
+}
 std::string Map::to_string(void) const
 {
 	std::stringstream ss;

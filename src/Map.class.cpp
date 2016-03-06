@@ -53,11 +53,13 @@ struct compare_points
 {
 	inline bool operator() (const MapPoint * lhs, const MapPoint * rhs)
 	{
-		if (lhs == NULL)
+		if (lhs == NULL && rhs != NULL)
 			return false;
-		if (rhs == NULL)
+		else if (lhs != NULL && rhs == NULL)
+			return true;
+		else if (lhs == NULL && rhs == NULL)
 			return false;
-		return lhs->water_level.load() + lhs->terrain_height.load() < rhs->water_level.load() + rhs->terrain_height.load();
+		return lhs->water_level.load() + lhs->terrain_height.load() <= rhs->water_level.load() + rhs->terrain_height.load();
 	}
 };
 
@@ -70,12 +72,12 @@ typedef struct toto
 void Map::apply_gravity(void)
 {
 	std::thread threads[(int)MAX_THREAD_COUNT];
+	static std::random_device rd;
+	static std::mt19937 g(rd());
 
 	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
 	{
 		threads[thread_id] = std::thread([this, thread_id](){
-			std::random_device rd;
-			std::mt19937 g(rd());
 			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
 			{
 				std::vector<tata*> points;
@@ -95,17 +97,17 @@ void Map::apply_gravity(void)
 				
 				for (int y = 0 ; y < this->height ; y++)
 				{
-						float old_val = 0;
-						while (this->data[x][y].water_level > 0.5f && this->data[x][y].water_level != old_val)
+					float old_val = 0;
+					while (this->data[x][y].water_level > 0 && this->data[x][y].water_level != old_val)
+					{
+						old_val = this->data[x][y].water_level;
+						std::shuffle(points.begin(), points.end(), g);
+						for (int pression = 1 ; pression < this->data[x][y].water_level + 1 ; pression++)
 						{
-							old_val = this->data[x][y].water_level;
-							std::shuffle(points.begin(), points.end(), g);
-							for (int pression = 1 ; pression < this->data[x][y].water_level ; pression++)
-							{
-								for (auto iter = points.begin(); iter != points.end(); ++iter)
-									ecoulement_unitaire(x, y, (*iter)->i * pression, (*iter)->j * pression);
-							}
+							for (auto iter = points.begin(); iter != points.end(); ++iter)
+								ecoulement_unitaire(x, y, (*iter)->i * pression, (*iter)->j * pression);
 						}
+					}
 				}
 			}
 		});
@@ -154,7 +156,7 @@ std::string Map::to_string(void) const
 	return ss.str();
 }
 
-void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
+void Map::elevate_rect(int x0, int y0, int x1, int y1, float value)
 {
 	int width = x1 - x0;
 	int height = y1 - y0;

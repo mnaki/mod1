@@ -4,7 +4,7 @@
 
 #include "Map.class.hpp"
 
-#define FPS 60.0
+#define FPS 24.0
 #define RENDER_AHEAD 3
 
 extern std::queue<Map> q;

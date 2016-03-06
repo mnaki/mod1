@@ -4,11 +4,12 @@
 
 std::queue<Map> q;
 std::mutex mtx;
+extern bool pour_water;
 
 void scenario_rain(Map * map)
 {
-	double size = (map->width + map->height) / 2.0;
-	double maillage = 10.0;
+	float size = (map->width + map->height) / 2.0;
+	float maillage = 10.0;
 	for (size_t x = map->width - map->width / 2 - size / 2; x < map->width / 2 + size / 2; x += maillage) {
 		for (size_t y = map->height - map->height / 2 - size / 2; y < map->height / 2 + size / 2; y += maillage) {
 			map->drop_water(x, y, 1);
@@ -20,17 +21,17 @@ void scenario_rain_middle(Map * map)
 {
 	for (int x = map->width / 2 - map->width / 70; x < map->width / 2 + map->width / 70; x++) {
 		for (int y = map->height / 2 - map->height / 70; y < map->height / 2 + map->height / 70; y++) {
-			map->drop_water(x, y, 2);
+			map->drop_water(x+10, y+50, 2);
 		}
 	}
 }
 
 void scenario_srilanka(Map * map)
 {
-	// static int level_water = -1;
-	// if (level_water == -1) {level_water = map->get_hauteur_max();}
+	static int level_water = -1;
+	if (level_water == -1) {level_water = map->get_hauteur_max();}
 	for (int x = 0; x < map->width; x++) {
-		map->drop_water(x, map->height - 2, 0.1);
+		map->set_water(x, map->height - 2, level_water);
 	}
 }
 
@@ -77,24 +78,24 @@ int	main(int ac, char **av)
 				if (q.size() <= RENDER_AHEAD)
 				{
 					mtx.unlock();
-					
-					switch(map->scenario)
-					{
-						case 0:
-							scenario_rain(map);
-							break;
-						case 1:
-							scenario_rain_middle(map);
-							break;
-						case 2:
-							scenario_srilanka(map);
-							break;
-						case 3:
-							scenario_riviere(map);
-							break;
-						default:
-							scenario_rain(map);
-					}
+					if (pour_water)
+						switch(map->scenario)
+						{
+							case 0:
+								scenario_rain(map);
+								break;
+							case 1:
+								scenario_rain_middle(map);
+								break;
+							case 2:
+								scenario_srilanka(map);
+								break;
+							case 3:
+								scenario_riviere(map);
+								break;
+							default:
+								scenario_rain(map);
+						}
 					map->apply_gravity();
 					mtx.lock();
 

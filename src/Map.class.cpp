@@ -4,12 +4,12 @@
 #include <random>
 #include <array>
 
-void Map::drop_water(int x, int y, int quantity)
+void Map::drop_water(int x, int y, float quantity)
 {
-	this->data[x][y].water_level += quantity;
+	this->data[x][y].water_level = this->data[x][y].water_level + quantity;
 }
 
-void Map::set_water(int x, int y, int value)
+void Map::set_water(int x, int y, float value)
 {
 	this->data[x][y].water_level = value;
 }
@@ -75,7 +75,7 @@ void Map::apply_gravity(void)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					for (int l = 0; l < points[thread_id].size(); l++)
+					for (size_t l = 0; l < points[thread_id].size(); l++)
 					{
 						if (this->data[x][y].water_level > 1)
 						{
@@ -93,25 +93,24 @@ void Map::apply_gravity(void)
 								if ((x >= 0 + conf_marge_bocal && x < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x][y-i]) < resistance(x, y))
 									points[thread_id][k++] = &this->data[x][y-i];
 
-								if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x-i][y-i];
-								if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x+i][y+i];
-								if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x-i][y+i];
-								if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
-									points[thread_id][k++] = &this->data[x+i][y-i];
+								// if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y-i]) < resistance(x, y))
+								// 	points[thread_id][k++] = &this->data[x-i][y-i];
+								// if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y+i]) < resistance(x, y))
+								// 	points[thread_id][k++] = &this->data[x+i][y+i];
+								// if ((x-i >= 0 + conf_marge_bocal && x-i < width - (1 + conf_marge_bocal) && y+i >= 0 + conf_marge_bocal && y+i < height - (1 + conf_marge_bocal)) && resistance(this->data[x-i][y+i]) < resistance(x, y))
+								// 	points[thread_id][k++] = &this->data[x-i][y+i];
+								// if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y-i >= 0 + conf_marge_bocal && y-i < height - (1 + conf_marge_bocal)) && resistance(this->data[x+i][y-i]) < resistance(x, y))
+								// 	points[thread_id][k++] = &this->data[x+i][y-i];
 							}
 							std::sort(std::begin(points[thread_id]), std::end(points[thread_id]), compare_points());
-							// std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
+							std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
 							std::reverse(std::begin(points[thread_id]), std::end(points[thread_id]));
 							for (MapPoint* point : points[thread_id])
 							{
-								if (point != NULL)
+								if (point != NULL && this->data[x][y].water_level > 0.0f)
 								{
-									bool r = (resistance(x, y) > resistance(*point));
-									this->data[x][y].water_level -= r;
-									point->water_level += r;
+									this->data[x][y].water_level = this->data[x][y].water_level - 1.0f;
+									point->water_level = point->water_level + 1.0f;
 								}
 							}
 						}
@@ -161,24 +160,24 @@ void Map::elevate_rect(int x0, int y0, int x1, int y1, int value)
 	int height = y1 - y0;
 	for (int x = 0 ; x < width ; x++)
 	for (int y = 0 ; y < height ; y++)
-		this->data[x+x0][y+y0].terrain_height += value;
+		this->data[x+x0][y+y0].terrain_height = this->data[x+x0][y+y0].terrain_height + value;
 }
 
 void Map::draw_cone(int start_x, int start_y, int radius, int height, bool reverse)
 {
-	double r = radius;
-	for (double h = 0 ; h < height ; h += 10.0)
+	float r = radius;
+	for (float h = 0 ; h < height ; h += 1.0f)
 	{
-		r *= 1.0f - (h / height) / 20.0f;
-		for (double x = 0 ; x < this->width ; x += 1.0)
-		for (double y = 0 ; y < this->height ; y += 1.0)
+		r *= 1.0f - (h / height) / 100.0f;
+		for (float x = 0 ; x < this->width ; x += 1.0f)
+		for (float y = 0 ; y < this->height ; y += 1.0f)
 		{
 			if (((x - start_x) * (x - start_x) + (y - start_y) * (y - start_y)) <= (r) * (r))
 			{
 				if (reverse)
-					this->data[x][y].terrain_height -= h/100;
+					this->data[x][y].terrain_height = this->data[x][y].terrain_height - h/1000.0f;
 				else
-					this->data[x][y].terrain_height += h/100;
+					this->data[x][y].terrain_height = this->data[x][y].terrain_height + h/1000.0f;
 			}
 		}
 	}

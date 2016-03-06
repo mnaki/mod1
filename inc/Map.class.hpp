@@ -34,8 +34,8 @@ class Map
 
     	Map(int width = 1, int height = 1, int scenario = 0);
     	~Map() = default;
-    	void		drop_water(int x, int y, int quantity);
-    	void		set_water(int x, int y, int value);
+    	void		drop_water(int x, int y, float quantity);
+    	void		set_water(int x, int y, float value);
 		int			get_hauteur_max(void) const ;
     	void		apply_gravity(void);
     	void		elevate_rect(int x0, int y0, int x1, int y1, int value);

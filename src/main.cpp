@@ -8,10 +8,10 @@ std::mutex mtx;
 void scenario_rain(Map * map)
 {
 	double size = (map->width + map->height) / 2.0;
-	double maillage = 20.0;
+	double maillage = 10.0;
 	for (size_t x = map->width - map->width / 2 - size / 2; x < map->width / 2 + size / 2; x += maillage) {
 		for (size_t y = map->height - map->height / 2 - size / 2; y < map->height / 2 + size / 2; y += maillage) {
-			map->drop_water(x, y, 2);
+			map->drop_water(x, y, 1);
 		}
 	}
 }
@@ -30,7 +30,7 @@ void scenario_srilanka(Map * map)
 	// static int level_water = -1;
 	// if (level_water == -1) {level_water = map->get_hauteur_max();}
 	for (int x = 0; x < map->width; x++) {
-		map->set_water(x, map->height - 2, 10);
+		map->drop_water(x, map->height - 2, 0.1);
 	}
 }
 
@@ -41,7 +41,7 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	sleep(0);
+	usleep(1000);
 }
 
 int	main(int ac, char **av)

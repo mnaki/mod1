@@ -129,7 +129,7 @@ void	display(void)
 		return ;
 	}
 
-	Map cmap = q.back();
+	Map cmap = q.front();
 
 	if (!conf_pause)
 	{

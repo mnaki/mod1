@@ -7,10 +7,10 @@ std::mutex mtx;
 void scenario_rain(Map * map)
 {
 	double size = (map->width + map->height) / 2.0;
-	double maillage = 20.0;
+	double maillage = 10.0;
 	for (size_t x = map->width - map->width / 2 - size / 2; x < map->width / 2 + size / 2; x += maillage) {
 		for (size_t y = map->height - map->height / 2 - size / 2; y < map->height / 2 + size / 2; y += maillage) {
-			map->drop_water(x, y, 2);
+			map->drop_water(x, y, 1);
 		}
 	}
 }
@@ -29,7 +29,7 @@ void scenario_srilanka(Map * map)
 	// static int level_water = -1;
 	// if (level_water == -1) {level_water = map->get_hauteur_max();}
 	for (int x = 0; x < map->width; x++) {
-		map->set_water(x, map->height - 2, 10);
+		map->drop_water(x, map->height - 2, 0.1);
 	}
 }
 
@@ -40,7 +40,7 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	sleep(0);
+	usleep(1000);
 }
 
 typedef enum map_e
@@ -51,7 +51,7 @@ typedef enum map_e
 	map_riviere
 } map_e;
 
-map_e current_map = map_riviere;
+map_e current_map = map_beach;
 
 int	main(int ac, char **av)
 {
@@ -59,7 +59,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 
 	// creation de la map
-	Map *map = new Map(190, 190);
+	Map *map = new Map(200, 200);
 	int radius = map->width / 10.0;
 	switch (current_map) {
 		case map_beach: {

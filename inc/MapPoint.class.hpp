@@ -14,8 +14,8 @@
 
 struct MapPoint
 {
-	std::atomic<int> terrain_height;
-	std::atomic<int> water_level;
+	std::atomic<float> terrain_height;
+	std::atomic<float> water_level;
 	MapPoint();
 	MapPoint(const MapPoint & rhs);
 	~MapPoint();

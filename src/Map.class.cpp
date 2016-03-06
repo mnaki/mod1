@@ -103,7 +103,7 @@ void Map::apply_gravity(void)
 								// 	points[thread_id][k++] = &this->data[x+i][y-i];
 							}
 							std::sort(std::begin(points[thread_id]), std::end(points[thread_id]), compare_points());
-							// std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
+							std::shuffle(points[thread_id].begin(), points[thread_id].end(), g);
 							std::reverse(std::begin(points[thread_id]), std::end(points[thread_id]));
 							for (MapPoint* point : points[thread_id])
 							{

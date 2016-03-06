@@ -29,7 +29,7 @@ class Map
     	std::vector< std::vector<MapPoint> > data;
     	int const width;
     	int const height;
-        int const conf_marge_bocal = 1;
+		int const conf_marge_bocal = 1;
 		int scenario;
 
     	Map(int width = 1, int height = 1, int scenario = 0);
@@ -38,6 +38,7 @@ class Map
     	void		set_water(int x, int y, float value);
 		int			get_hauteur_max(void) const ;
     	void		apply_gravity(void);
+		void		ecoulement_unitaire(int x, int y, int i, int j);
     	void		elevate_rect(int x0, int y0, int x1, int y1, int value);
         void		draw_cone(int start_x, int start_y, int radius, int height, bool reverse = false);
 	    std::string	to_string(void) const;

@@ -7,10 +7,22 @@ std::mutex mtx;
 extern bool pour_water;
 bool running = true;
 
+void flood_uniform(Map * map)
+{
+	static float level = 0.0f;
+	for (int x = 0; x < map->width ; x += 1) {
+		for (int y = 0; y < map->height ; y += 1) {
+			if (map->resistance(x, y) < level)
+				map->drop_water(x, y, 1.0f);
+		}
+	}
+	level += 0.1f;
+}
+
 void scenario_rain(Map * map)
 {
-	for (size_t x = 0; x < map->width ; x += 2) {
-		for (size_t y = 0; y < map->height ; y += 2) {
+	for (int x = 0; x < map->width ; x += 2) {
+		for (int y = 0; y < map->height ; y += 2) {
 			map->drop_water(x, y, 0.01f);
 		}
 	}
@@ -91,6 +103,9 @@ int	main(int ac, char **av)
 								break;
 							case 3:
 								scenario_riviere(map);
+								break;
+							case 4:
+								flood_uniform(map);
 								break;
 							default:
 								scenario_rain(map);

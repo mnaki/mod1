@@ -63,7 +63,7 @@ struct compare_points
 	}
 };
 
-#define MAX_LOOKUP_DISTANCE 1
+#define MAX_LOOKUP_DISTANCE 2
 
 void Map::apply_gravity(void)
 {
@@ -79,7 +79,7 @@ void Map::apply_gravity(void)
 			{
 				for (int y = 0 ; y < this->height ; y++)
 				{
-					int k = points[thread_id].size()*5.0f;
+					float k = points[thread_id].size()*10.0f;
 					for (float l = 0; l < k; l++)
 					{
 						points[thread_id].fill(NULL);
@@ -110,14 +110,13 @@ void Map::apply_gravity(void)
 						// std::reverse(std::begin(points[thread_id]), std::end(points[thread_id]));
 						for (MapPoint* point : points[thread_id])
 						{
-							if (point != NULL)
+							if (point != NULL && this->data[x][y].water_level > 0.0f && resistance(*point) < resistance(this->data[x][y]))
 							{
-								float diff = (this->data[x][y].water_level > point->water_level);
-								this->data[x][y].water_level = this->data[x][y].water_level - diff / 10.0f;
-								point->water_level = point->water_level + diff / 10.0f;
+								this->data[x][y].water_level = this->data[x][y].water_level - 0.001f * k;
+								point->water_level = point->water_level + 0.001f * k;
 							}
 						}
-				}
+					}
 				}
 			}
 		});

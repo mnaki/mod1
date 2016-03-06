@@ -130,17 +130,17 @@ void	display(void)
 
 	if (!conf_pause)
 	{
-		if (conf_skip_frames)
-		{
-			while (q.size() > 0)
-			{
-				q.pop();
-			}
-		}
-		else
-		{
+		// if (conf_skip_frames)
+		// {
+		// 	while (q.size() > 0)
+		// 	{
+		// 		q.pop();
+		// 	}
+		// }
+		// else
+		// {
 			q.pop();
-		}
+		// }
 	}
 
 	mtx.unlock();

@@ -30,9 +30,9 @@ class Map
     	int const width;
     	int const height;
         int const conf_marge_bocal = 1;
-		std::string scenario;
+		int scenario;
 
-    	Map(int width = 1, int height = 1, std::string scenario = "strilanka");
+    	Map(int width = 1, int height = 1, int scenario = 0);
     	~Map() = default;
     	void		drop_water(int x, int y, float quantity);
     	void		set_water(int x, int y, float value);

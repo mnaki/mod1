@@ -32,36 +32,15 @@ int Map::get_hauteur_max(void) const
 	return res;
 }
 
-int Map::resistance(int x, int y)
+float Map::resistance(int x, int y)
 {
 	if (x >= 0 && x < width - 1 && y >= 0 && y < height - 1)
-	{
-		return this->data[x][y].water_level.load() + this->data[x][y].terrain_height.load();
-	}
+		return resistance(this->data[x][y]);
 	else
-	{
-		return std::numeric_limits<int>::max();
-	}
+		return std::numeric_limits<float>::max();
 }
 
-int Map::resistance(MapPoint const & point)
-{
-	return point.water_level.load() + point.terrain_height.load();
-}
-
-struct compare_points
-{
-	inline bool operator() (const MapPoint * lhs, const MapPoint * rhs)
-	{
-		if (lhs == NULL && rhs != NULL)
-			return false;
-		else if (lhs != NULL && rhs == NULL)
-			return true;
-		else if (lhs == NULL && rhs == NULL)
-			return false;
-		return lhs->water_level.load() + lhs->terrain_height.load() <= rhs->water_level.load() + rhs->terrain_height.load();
-	}
-};
+float Map::resistance(MapPoint const & point) {return point.water_level.load() + (float)point.terrain_height.load();}
 
 typedef struct toto
 {
@@ -102,7 +81,7 @@ void Map::apply_gravity(void)
 					{
 						old_val = this->data[x][y].water_level;
 						std::shuffle(points.begin(), points.end(), g);
-						for (int pression = 1 ; pression < this->data[x][y].water_level + 1 ; pression++)
+						for (float pression = 1 ; pression < this->data[x][y].water_level + 1.1f ; pression++)
 						{
 							for (auto iter = points.begin(); iter != points.end(); ++iter)
 								ecoulement_unitaire(x, y, (*iter)->i * pression, (*iter)->j * pression);

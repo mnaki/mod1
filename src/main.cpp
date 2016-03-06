@@ -5,6 +5,7 @@
 std::queue<Map> q;
 std::mutex mtx;
 extern bool pour_water;
+bool running = true;
 
 void scenario_rain(Map * map)
 {
@@ -68,7 +69,7 @@ int	main(int ac, char **av)
   	glutIdleFunc(idle);
 
 	std::thread t([&map]{
-		while (1)
+		while (running)
 		{
 			try
 			{

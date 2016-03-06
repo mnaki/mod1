@@ -10,6 +10,7 @@ bool	conf_pause =		CONFIG_PAUSE;
 GLfloat rotate =			GLF_ROTATE;
 GLfloat target_rotate =		GLF_TARGET_ROTATE;
 bool    pour_water =          false;
+extern bool running;
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -25,6 +26,8 @@ void	keyboard(unsigned char ch, int x, int y)
 	switch (ch)
 	{
 		case 27:             /* escape */
+			running = !running;
+			usleep(10000);
 			exit(0);
 			break;
 		case 'w':

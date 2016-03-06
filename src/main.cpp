@@ -8,11 +8,9 @@ extern bool pour_water;
 
 void scenario_rain(Map * map)
 {
-	float size = (map->width + map->height) / 2.0;
-	float maillage = 10.0;
-	for (size_t x = map->width - map->width / 2 - size / 2; x < map->width / 2 + size / 2; x += maillage) {
-		for (size_t y = map->height - map->height / 2 - size / 2; y < map->height / 2 + size / 2; y += maillage) {
-			map->drop_water(x, y, 1);
+	for (size_t x = 0; x < map->width ; x += 2) {
+		for (size_t y = 0; y < map->height ; y += 2) {
+			map->drop_water(x, y, 0.01f);
 		}
 	}
 }
@@ -21,7 +19,7 @@ void scenario_rain_middle(Map * map)
 {
 	for (int x = map->width / 2 - map->width / 70; x < map->width / 2 + map->width / 70; x++) {
 		for (int y = map->height / 2 - map->height / 70; y < map->height / 2 + map->height / 70; y++) {
-			map->drop_water(x+10, y+50, 2);
+			map->drop_water(x, y, 2);
 		}
 	}
 }

@@ -73,7 +73,7 @@ void Map::apply_gravity(void)
 					a = new tata();	a->i = -i;	a->j = i;	points.push_back(a);
 					a = new tata();	a->i = i;	a->j = -i;	points.push_back(a);
 				}
-				
+
 				for (int y = 0 ; y < this->height ; y++)
 				{
 					float old_val = 0;

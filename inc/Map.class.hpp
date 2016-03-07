@@ -27,9 +27,9 @@ class Map
     public:
 
     	std::vector< std::vector<MapPoint> > data;
-    	int const width;
-    	int const height;
-		int const conf_marge_bocal = 1;
+    	int width;
+    	int height;
+		int conf_marge_bocal = 1;
 		int scenario;
 
     	Map(int width = 1, int height = 1, int scenario = 0);

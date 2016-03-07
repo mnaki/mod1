@@ -1,6 +1,6 @@
 #include "Affichage.hpp"
 #include "general.hpp"
-
+#include <atomic>
 #include <stdio.h>
 
 bool	conf_rotate =		CONFIG_ROTATE;
@@ -9,8 +9,8 @@ GLfloat	conf_zoom =			CONFIG_ZOOM;
 bool	conf_pause =		CONFIG_PAUSE;
 GLfloat rotate =			GLF_ROTATE;
 GLfloat target_rotate =		GLF_TARGET_ROTATE;
-bool    pour_water =          false;
-extern bool running;
+std::atomic<bool>           pour_water(true);
+std::atomic<bool>           running(true);
 
 #define WIDTH 640                       // Largeur de la fenêtre
 #define HEIGHT 480                      // Hauteur de la fenêtre
@@ -70,7 +70,7 @@ void	keyboard(unsigned char ch, int x, int y)
 			break ;
 		case 'r':
 		case 'R':
-			target_rotate += 45.0f * 2;
+			target_rotate += 45.0f * 2.0f;
 			break;
 		case 'P':
 		case 'p':
@@ -84,18 +84,18 @@ void	keyboard(unsigned char ch, int x, int y)
 
 void set_color(Map const & cmap, int x, int y)
 {
-	static float hauteur_ref = -1;
-	static float hauteur_ref2 = -1;
-	if (hauteur_ref == -1)
+	static float hauteur_ref = -1.0f;
+	static float hauteur_ref2 = -1.0f;
+	if (hauteur_ref == -1.0f)
 	{
-		hauteur_ref = cmap.get_hauteur_max() / 3;
-		hauteur_ref2 = hauteur_ref * 2;
+		hauteur_ref = cmap.get_hauteur_max() / 3.0f;
+		hauteur_ref2 = hauteur_ref * 2.0f;
 	}
 
 	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height + 0.1f) / (cmap.data[x][y].terrain_height + 5.0f);
-	if (cmap.data[x][y].water_level > 0)
+	if (cmap.data[x][y].water_level > 0.0f)
 	{
-		glColor4f( 0, 0.4f / deepness, 0.9f / deepness, 0.75f );
+		glColor4f( 0.0f, 0.4f / deepness, 0.9f / deepness, 0.75f );
 	}
 	else
 	{
@@ -131,19 +131,14 @@ void	display(void)
 
 	Map cmap = q.front();
 
+	if (conf_skip_frames)
+	{
+		cmap = q.back();
+	}
+	
 	if (!conf_pause)
 	{
-		// if (conf_skip_frames)
-		// {
-		// 	while (q.size() > 0)
-		// 	{
-		// 		q.pop();
-		// 	}
-		// }
-		// else
-		// {
-			q.pop();
-		// }
+		q.pop();
 	}
 
 	mtx.unlock();
@@ -190,9 +185,5 @@ void	display(void)
 	}
 
 	glFlush();
-
-	if (!conf_skip_frames)
-	{
-		usleep(1000000 / CONFIG_FPS);
-	}
+	idle();
 }

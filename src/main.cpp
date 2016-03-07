@@ -1,11 +1,14 @@
 #include "Affichage.hpp"
 #include "general.hpp"
 #include "parser.hpp"
+#include <sched.h>
+#include <time.h>
+#include <atomic>
 
 std::queue<Map> q;
 std::mutex mtx;
-extern bool pour_water;
-bool running = true;
+extern std::atomic<bool> pour_water;
+extern std::atomic<bool> running;
 
 void flood_uniform(Map * map)
 {
@@ -43,7 +46,7 @@ void scenario_srilanka(Map * map)
 	static int level_water = -1;
 	if (level_water == -1) {level_water = map->get_hauteur_max();}
 	for (int x = 0; x < map->width; x++) {
-		map->set_water(x, map->height - 2, level_water);
+		map->drop_water(x, map->height - 2, level_water);
 	}
 }
 
@@ -54,7 +57,15 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	usleep(1000);
+	// struct timespec t{ 0, 1000000 };
+	// nanosleep(&t, NULL);
+	sched_yield();
+}
+
+void glutTimer(int te)
+{
+	glutPostRedisplay();
+	glutTimerFunc(1000 / FPS, glutTimer, 1);
 }
 
 int	main(int ac, char **av)
@@ -79,6 +90,7 @@ int	main(int ac, char **av)
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
 	glutDisplayFunc(display);
+	glutTimerFunc(1000 / FPS, glutTimer, 1);
   	glutKeyboardFunc(keyboard);
   	glutIdleFunc(idle);
 
@@ -133,18 +145,25 @@ int	main(int ac, char **av)
 				  	//
 					q.push(*map);
 				}
-				else if (q.size() > 0)
-					glutPostRedisplay();
-				mtx.unlock();
+				if (q.size() > 2)
+				{
+					mtx.unlock();
+					idle();
+				}
+				else
+				{
+					mtx.unlock();
+				}
 			}
 			catch (std::exception & e)
 			{
 				std::cout << e.what() << std::endl;
 			}
 		}
+		exit(0);
 	});
-	t.detach();
  	glutMainLoop();
+	t.join();
 	(void)ac;
 	(void)av;
 	return 0;

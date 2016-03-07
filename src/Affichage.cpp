@@ -32,22 +32,22 @@ void	keyboard(unsigned char ch, int x, int y)
 			break;
 		case 'w':
 		case 'W':
-			ypos+=0.1f;
+			glTranslatef(0,-10, 0);
 			glutPostRedisplay();
 			break;
 		case 's':
 		case 'S':
-			ypos-=0.1f;
+			glTranslatef(0, 10, 0);
 			glutPostRedisplay();
 			break;
 		case 'a':
 		case 'A':
-			xpos-=0.1f;
+			glTranslatef(10, 0,0);
 			glutPostRedisplay();
 			break;
 		case 'd':
 		case 'D':
-			xpos+=0.1f;
+			glTranslatef(-10, 0,0);
 			glutPostRedisplay();
 			break;
 		case 'Q':
@@ -109,8 +109,10 @@ void set_color(Map const & cmap, int x, int y)
 		}
 	}
 }
-void	display(void)
+
+void reshape(int w, int h)
 {
+
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -118,9 +120,37 @@ void	display(void)
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	// glFrustum(-1.0, 1.0, -1.0, 1.0, 5, 100);
-	// glOrtho(-1.0, 1.0, -1.0, 1.0, 5, 100);
 
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
+
+	glLoadIdentity();
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90.0f, w / h, 1.0f, h);
+	glMatrixMode(GL_MODELVIEW);
+	glRotatef(45.0f, -205.0f, 0, 0);
+	glTranslatef(0, 0,-265.0f);
+}
+
+#include <cmath>
+
+void mouse_motion(int x, int y)
+{
+	static GLdouble oldx = x, oldy = y;
+	glRotatef(0.75f, y - oldy, 0.0f, x - oldx);
+	oldx = x; oldy = y;
+}
+
+void	display(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 	mtx.lock();
 	if (q.size() <= 0)
 	{
@@ -135,7 +165,7 @@ void	display(void)
 	{
 		cmap = q.back();
 	}
-	
+
 	if (!conf_pause)
 	{
 		q.pop();
@@ -150,19 +180,7 @@ void	display(void)
 	}
 
 	rotate += (target_rotate + - rotate) / 8.0f;
-	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
-
-	glLoadIdentity();
-	glTranslatef(xpos, ypos, zpos);
-
-	glScalef(conf_zoom, conf_zoom, conf_zoom);
-	glRotatef(45.0f, -1.0f, 0.0f, 0.0f);
-	glRotatef(rotate, 0.0f, 0.0f, 1.0f);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	for (GLfloat x = 0; x < cmap.width - 1; x++)
 	{

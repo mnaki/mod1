@@ -68,6 +68,9 @@ void glutTimer(int te)
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
 }
 
+void reshape(int w, int h);
+void mouse_motion(int x, int y);
+
 int	main(int ac, char **av)
 {
 	// initiation du programe
@@ -89,7 +92,9 @@ int	main(int ac, char **av)
 	h = (W_Height > map->height * LONGEUR_PIXEL) ? W_Height : map->height	* LONGEUR_PIXEL;
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
+	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
+	glutMotionFunc(mouse_motion);
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
   	glutKeyboardFunc(keyboard);
   	glutIdleFunc(idle);

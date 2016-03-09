@@ -6,7 +6,7 @@
 #    By: bgauci <bgauci@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/02/23 20:57:43 by bgauci            #+#    #+#              #
-#    Updated: 2016/03/03 17:32:01 by bgauci           ###   ########.fr        #
+#    Updated: 2016/03/09 22:40:46 by bgauci           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,13 +33,19 @@ FLAGS_ERROR =	-Wall -Wextra -Wno-deprecated-declarations
 
 
 SRC =		$(SRCDIR)/main.cpp				\
-			$(SRCDIR)/Affichage.cpp			\
+			$(SRCDIR)/gestion_input.cpp		\
+			$(SRCDIR)/Affichage_iso.cpp		\
+			$(SRCDIR)/Affichage_haut.cpp	\
+			$(SRCDIR)/Affichage_3D.cpp		\
 			$(SRCDIR)/Map.class.cpp			\
 			$(SRCDIR)/parser.cpp			\
 			$(SRCDIR)/MapPoint.class.cpp
 
 OBJ =		$(OBJDIR)/main.o				\
-			$(OBJDIR)/Affichage.o			\
+			$(OBJDIR)/gestion_input.o		\
+			$(OBJDIR)/Affichage_iso.o		\
+			$(OBJDIR)/Affichage_haut.o		\
+			$(OBJDIR)/Affichage_3D.o		\
 			$(OBJDIR)/Map.class.o			\
 			$(OBJDIR)/parser.o				\
 			$(OBJDIR)/MapPoint.class.o

@@ -36,5 +36,15 @@
 #define GLF_TARGET_ROTATE	-45.0f //GLfloat
 
 //void	reshape(int w, int h);
+
+void	display_vue_haute(void);
+void	reshape_vue_haute(int w, int h);
+
+void	display_iso(void);
+void	reshape_iso(int w, int h);
+
 void	display(void);
+void	reshape(int w, int h);
+
 void	keyboard(unsigned char ch, int x, int y);
+void	mouse_motion(int x, int y);

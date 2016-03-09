@@ -68,8 +68,8 @@ void glutTimer(int te)
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
 }
 
-void reshape(int w, int h);
-void mouse_motion(int x, int y);
+//void reshape(int w, int h);
+//void mouse_motion(int x, int y);
 
 int	main(int ac, char **av)
 {
@@ -90,10 +90,11 @@ int	main(int ac, char **av)
 	int w = 0, h = 0;
 	w = (W_Width > map->width * LARGEUR_PIXEL) ? W_Width : map->width * LARGEUR_PIXEL;
 	h = (W_Height > map->height * LONGEUR_PIXEL) ? W_Height : map->height	* LONGEUR_PIXEL;
+	glutInitDisplayMode(GLUT_DOUBLE);
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
-	glutReshapeFunc(reshape);
-	glutDisplayFunc(display);
+	glutReshapeFunc(reshape_iso);
+	glutDisplayFunc(display_iso);
 	glutMotionFunc(mouse_motion);
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
   	glutKeyboardFunc(keyboard);
@@ -132,22 +133,21 @@ int	main(int ac, char **av)
 					map->apply_gravity();
 					mtx.lock();
 
-				  	// bordures nulles
-				  	for (int x = 0; x < map->width; x++)
-				  	{
-				  		map->data[x][0].terrain_height = 0;
-				  		map->data[x][map->height-1].terrain_height = 0;
-				  		map->data[x][0].water_level = 0;
-				  		map->data[x][map->height-1].water_level = 0;
-				  	}
-				  	for (int y = 0; y < map->height; y++)
-				  	{
-				  		map->data[0][y].terrain_height = 0;
-				  		map->data[map->width-1][y].terrain_height = 0;
-				  		map->data[0][y].water_level = 0;
-				  		map->data[map->width-1][y].water_level = 0;
-				  	}
-				  	//
+					// bordures nulles
+					for (int x = 0; x < map->width; x++)
+					{
+						map->data[x][0].terrain_height = 0;
+						map->data[x][map->height-1].terrain_height = 0;
+						map->data[x][0].water_level = 0;
+						map->data[x][map->height-1].water_level = 0;
+					}
+					for (int y = 0; y < map->height; y++)
+					{
+						map->data[0][y].terrain_height = 0;
+						map->data[map->width-1][y].terrain_height = 0;
+						map->data[0][y].water_level = 0;
+						map->data[map->width-1][y].water_level = 0;
+					}
 					q.push(*map);
 				}
 				if (q.size() > 2)

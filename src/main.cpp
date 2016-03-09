@@ -80,7 +80,7 @@ int	main(int ac, char **av)
 	Map *map;
 	if (ac != 2)
 	{
-		std::cout << "usage : mod1 fichier.map" << std::endl;
+		std::cout << "usage : mod1 fichier.mod1" << std::endl;
 		return 0;
 	}
 

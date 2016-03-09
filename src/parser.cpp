@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
 #include "parser.hpp"
 
 #define WIDTH 200
@@ -8,6 +9,13 @@
 Map *init_from_fichier(std::string s)
 {
 	std::ifstream fichier(s, std::ios::in);
+
+	std::size_t found = s.rfind(".mod1");
+	if (found == std::string::npos || found != s.size() - 5)
+	{
+		std::cout << "mauvaise extention";
+		exit(1);
+	}
 
 	if (fichier)
 	{

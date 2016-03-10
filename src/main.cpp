@@ -52,7 +52,7 @@ void scenario_srilanka(Map * map)
 
 void scenario_riviere(Map * map)
 {
-	map->drop_water(30, map->height / 4.01, 10);
+	map->drop_water(30, map->height / 4.01, 20);
 }
 
 void idle()
@@ -64,6 +64,7 @@ void idle()
 
 void glutTimer(int te)
 {
+	(void)te;
 	glutPostRedisplay();
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
 }
@@ -94,13 +95,13 @@ int	main(int ac, char **av)
 	glutDisplayFunc(display_iso);
 	glutMotionFunc(mouse_motion);
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
-  	glutKeyboardFunc(keyboard);
-  	glutIdleFunc(idle);
+	glutKeyboardFunc(keyboard);
+	glutIdleFunc(idle);
 
 	std::thread t([&map]{
-		while (running)
+		try
 		{
-			try
+			while (running)
 			{
 				mtx.lock();
 				if (q.size() <= RENDER_AHEAD)
@@ -108,25 +109,25 @@ int	main(int ac, char **av)
 					mtx.unlock();
 					if (pour_water)
 						switch(map->scenario)
-						{
-							case 0:
-								scenario_rain(map);
-								break;
-							case 1:
-								scenario_rain_middle(map);
-								break;
-							case 2:
-								scenario_srilanka(map);
-								break;
-							case 3:
-								scenario_riviere(map);
-								break;
-							case 4:
-								flood_uniform(map);
-								break;
-							default:
-								scenario_rain(map);
-						}
+					{
+						case 0:
+						scenario_rain(map);
+						break;
+						case 1:
+						scenario_rain_middle(map);
+						break;
+						case 2:
+						scenario_srilanka(map);
+						break;
+						case 3:
+						scenario_riviere(map);
+						break;
+						case 4:
+						flood_uniform(map);
+						break;
+						default:
+						scenario_rain(map);
+					}
 					map->apply_gravity();
 					mtx.lock();
 
@@ -157,14 +158,13 @@ int	main(int ac, char **av)
 					mtx.unlock();
 				}
 			}
-			catch (std::exception & e)
-			{
-				std::cout << e.what() << std::endl;
-			}
 		}
-		std::terminate();
+		catch (std::exception & e)
+		{
+			std::cout << e.what() << std::endl;
+		}
 	});
- 	glutMainLoop();
+	glutMainLoop();
 	t.join();
 	(void)ac;
 	(void)av;

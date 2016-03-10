@@ -57,8 +57,8 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	// struct timespec t{ 0, 1000000 };
-	// nanosleep(&t, NULL);
+	struct timespec t{ 0, 1000000 };
+	nanosleep(&t, NULL);
 	sched_yield();
 }
 
@@ -67,9 +67,6 @@ void glutTimer(int te)
 	glutPostRedisplay();
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
 }
-
-//void reshape(int w, int h);
-//void mouse_motion(int x, int y);
 
 int	main(int ac, char **av)
 {
@@ -165,7 +162,7 @@ int	main(int ac, char **av)
 				std::cout << e.what() << std::endl;
 			}
 		}
-		exit(0);
+		std::terminate();
 	});
  	glutMainLoop();
 	t.join();

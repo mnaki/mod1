@@ -2,7 +2,7 @@
 #include "general.hpp"
 #include <stdio.h>
 
-GLfloat rotate =			GLF_ROTATE;
+GLfloat rotate =			GLF_ROTATE - 45.0f * 3;
 
 static void set_color(Map const & cmap, int x, int y)
 {
@@ -44,8 +44,9 @@ void reshape(int w, int h)
 	glLoadIdentity();
 	gluPerspective(90.0f, w / h, 1.0f, h);
 	glMatrixMode(GL_MODELVIEW);
-	glRotatef(45.0f, -205.0f, 0, 0);
-	glTranslatef(0, 0,-265.0f);
+	glRotatef(45.0f, -45.0f*2, 0, 0);
+	glTranslatef(0, 0, 45 * -6.0f);
+	glTranslatef(0, 45.0f * 4.0f, 0);
 }
 
 void display(void)
@@ -70,10 +71,10 @@ void display(void)
 
 	mtx.unlock();
 
-	if (conf_rotate)
-		rotate -= 45.0f/8.0f;
+	// if (conf_rotate)
+	// 	rotate -= 45.0f/8.0f;
 
-	rotate += (target_rotate + - rotate) / 8.0f;
+	// rotate += (target_rotate + - rotate) / 8.0f;
 
 	for (GLfloat x = 0; x < cmap.width - 1; x++)
 	{
@@ -81,16 +82,16 @@ void display(void)
 		for (GLfloat y = 0; y < cmap.height - 1; y++)
 		{
 			set_color(cmap, x, y+1);
-			glVertex3f( x , y+1 , cmap.data[x][y+1].terrain_height + cmap.data[x][y+1].water_level );
+			glVertex3f( x-cmap.width/2 , y-cmap.height/2+1 , cmap.data[x][y+1].terrain_height + cmap.data[x][y+1].water_level );
 
 			set_color(cmap, x, y);
-			glVertex3f( x , y , cmap.data[x][y].terrain_height + cmap.data[x][y].water_level );
+			glVertex3f( x-cmap.width/2 , y-cmap.height/2 , cmap.data[x][y].terrain_height + cmap.data[x][y].water_level );
 
 			set_color(cmap, x+1, y+1);
-			glVertex3f( x+1 , y+1 , cmap.data[x+1][y+1].terrain_height + cmap.data[x+1][y+1].water_level );
+			glVertex3f( x-cmap.width/2+1 , y-cmap.height/2+1 , cmap.data[x+1][y+1].terrain_height + cmap.data[x+1][y+1].water_level );
 
 			set_color(cmap, x+1, y);
-			glVertex3f( x+1 , y , cmap.data[x+1][y].terrain_height + cmap.data[x+1][y].water_level );
+			glVertex3f( x-cmap.width/2+1 , y-cmap.height/2 , cmap.data[x+1][y].terrain_height + cmap.data[x+1][y].water_level );
 		}
 		glEnd();
 	}

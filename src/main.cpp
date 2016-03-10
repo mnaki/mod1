@@ -57,7 +57,7 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	struct timespec t{ 0, 1000000 };
+	struct timespec t{ 0, 10000000 };
 	nanosleep(&t, NULL);
 	sched_yield();
 }
@@ -129,7 +129,7 @@ int	main(int ac, char **av)
 						scenario_rain(map);
 					}
 					map->apply_gravity();
-					mtx.lock();
+					idle();
 
 					// bordures nulles
 					for (int x = 0; x < map->width; x++)
@@ -146,9 +146,10 @@ int	main(int ac, char **av)
 						map->data[0][y].water_level = 0;
 						map->data[map->width-1][y].water_level = 0;
 					}
+					mtx.lock();
 					q.push(*map);
 				}
-				if (q.size() > 2)
+				if (q.size() > 0)
 				{
 					mtx.unlock();
 					idle();
@@ -157,7 +158,10 @@ int	main(int ac, char **av)
 				{
 					mtx.unlock();
 				}
+				idle();
+				mtx.unlock();
 			}
+			exit(0);
 		}
 		catch (std::exception & e)
 		{

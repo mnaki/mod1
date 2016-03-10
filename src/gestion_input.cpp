@@ -19,8 +19,6 @@ void	keyboard(unsigned char ch, int x, int y)
 	{
 		case 27:             /* escape */
 			running = !running;
-			usleep(10000);
-			exit(0);
 			break;
 		case 'w':
 		case 'W':
@@ -97,6 +95,9 @@ void	keyboard(unsigned char ch, int x, int y)
 void mouse_motion(int x, int y)
 {
 	static GLdouble oldx = x, oldy = y;
-	glRotatef(0.5f, 0, 0.0f, x - oldx);
+	if ((x - oldx) != 0)
+	{
+		glRotatef(4.0f, 0, 0.0f, (x - oldx));
+	}
 	oldx = x; oldy = y;
 }

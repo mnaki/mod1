@@ -1,8 +1,15 @@
-#include "Map.class.hpp"
+#define _GNU_SOURCE
 #include <limits>
 #include <cstddef>
 #include <random>
 #include <array>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sched.h>
+#include "Map.class.hpp"
+#include "general.hpp"
 
 void Map::drop_water(int x, int y, float quantity)
 {
@@ -50,14 +57,23 @@ typedef struct toto
 
 void Map::apply_gravity(void)
 {
-	std::thread threads[(int)MAX_THREAD_COUNT];
+	std::thread threads[CONF_NUM_CORES];
 	static std::random_device rd;
 	static std::mt19937 g(rd());
 
-	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
+	for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
 	{
-		threads[thread_id] = std::thread([this, thread_id](){
-			for (int x = thread_id * (this->width / MAX_THREAD_COUNT) ; x < (thread_id+1.0) * (this->width / MAX_THREAD_COUNT) ; x++)
+		threads[thread_id] = std::thread([this, thread_id]()
+		{
+			{
+				cpu_set_t cpuset;
+				pthread_t thread;
+				thread = pthread_self();
+				CPU_ZERO(&cpuset);
+				CPU_SET(thread_id, &cpuset);
+				pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+			}
+			for (int x = thread_id * (this->width / CONF_NUM_CORES) ; x < (thread_id+1.0) * (this->width / CONF_NUM_CORES) ; x++)
 			{
 				std::vector<tata*> points;
 				for (int i = 1 ; i <= 1 ; i++)
@@ -91,7 +107,7 @@ void Map::apply_gravity(void)
 			}
 		});
 	}
-	for (int thread_id = 0 ; thread_id < MAX_THREAD_COUNT ; thread_id++)
+	for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
 	{
 		threads[thread_id].join();
 	}

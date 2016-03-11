@@ -5,10 +5,11 @@
 #include <time.h>
 #include <atomic>
 
-std::queue<Map> q;
-std::mutex mtx;
+std::queue<Map>          q;
+std::mutex               mtx;
 extern std::atomic<bool> pour_water;
 extern std::atomic<bool> running;
+int                      CONF_NUM_CORES;
 
 void flood_uniform(Map * map)
 {
@@ -75,6 +76,9 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 	srand(time(NULL));
 
+	CONF_NUM_CORES = std::thread::hardware_concurrency();
+	std::cout << "CONF_NUM_CORES = " << CONF_NUM_CORES << std::endl;
+
 	Map *map;
 	if (ac != 2)
 	{
@@ -129,7 +133,6 @@ int	main(int ac, char **av)
 						scenario_rain(map);
 					}
 					map->apply_gravity();
-					idle();
 
 					// bordures nulles
 					for (int x = 0; x < map->width; x++)
@@ -149,17 +152,17 @@ int	main(int ac, char **av)
 					mtx.lock();
 					q.push(*map);
 				}
-				if (q.size() > 0)
+				if (q.size() >= 2)
 				{
-					mtx.unlock();
 					idle();
+					mtx.unlock();
 				}
 				else
 				{
 					mtx.unlock();
 				}
-				idle();
 				mtx.unlock();
+				idle(); // Pour que le while ne monopolise pas tout le temps CPU et que l'interface reste fluide
 			}
 			exit(0);
 		}

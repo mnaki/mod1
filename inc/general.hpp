@@ -4,8 +4,8 @@
 
 #include "Map.class.hpp"
 
-#define FPS 1.0
-#define RENDER_AHEAD FPS / 3.0
+#define FPS (30.0)
+#define RENDER_AHEAD (FPS * 2.0)
 
 extern std::queue<Map>		q;
 extern std::mutex			mtx;

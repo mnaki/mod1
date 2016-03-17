@@ -130,10 +130,10 @@ int	main(int ac, char **av)
 		{
 			while (running)
 			{
-				mtx.lock();
-				if (q.size() <= RENDER_AHEAD)
+				if (q.size() < RENDER_AHEAD)
 				{
 					if (pour_water)
+                    {
 						switch(map->scenario)
 						{
 							case 0:
@@ -158,6 +158,7 @@ int	main(int ac, char **av)
 	                            scenario_rain(map);
 	                            break;
 						}
+                    }
 					map->apply_gravity();
 
 					// bordures nulles
@@ -177,15 +178,10 @@ int	main(int ac, char **av)
 					}
 					q.push(*map);
 				}
-				if (q.size() > RENDER_AHEAD / 2.0)
+				if (q.size() > 2)
 				{
-					mtx.unlock();
+                    usleep(1000000/FPS);
                     idle();
-                    idle();
-				}
-				else
-				{
-					mtx.unlock();
 				}
 				idle();
 			}

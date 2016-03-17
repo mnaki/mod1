@@ -23,12 +23,33 @@ void flood_uniform(Map * map)
 	level += 0.1f;
 }
 
+void flood_from_borders(Map * map)
+{
+    for (int y = 0; y < map->height ; y += 1)
+    {
+        map->set_water(0, y, map->get_hauteur_max());
+    }
+    for (int y = 0; y < map->height ; y += 1)
+    {
+        map->set_water(map->width - 1, y, map->get_hauteur_max());
+    }
+
+    for (int x = 0; x < map->width ; x += 1)
+    {
+        map->set_water(x, 0, map->get_hauteur_max());
+    }
+    for (int x = 0; x < map->width ; x += 1)
+    {
+        map->set_water(x, map->height - 1, map->get_hauteur_max());
+    }
+}
+
 void scenario_rain(Map * map)
 {
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
-			if ((rand() % 2 + 1) > 1)
-				map->drop_rain(x, y, 10.0f);
+			if (rand() % 10000 == 0)
+				map->drop_rain(x, y, 0.30f);
 		}
 	}
 }
@@ -53,14 +74,16 @@ void scenario_srilanka(Map * map)
 
 void scenario_riviere(Map * map)
 {
-	map->drop_water(30, map->height / 4.01, 20);
+    static int make_it_rain = 1;
+    if (make_it_rain % 10 == 0)
+        map->drop_rain(40, map->height / 3, 1.0f);
+    make_it_rain++;
 }
 
 void idle()
 {
-	// struct timespec t{ 0, 10000000 };
-	// nanosleep(&t, NULL);
-	// sched_yield();
+	sched_yield();
+    sleep(0);
 }
 
 void glutTimer(int te)
@@ -95,8 +118,8 @@ int	main(int ac, char **av)
 	glutInitDisplayMode(GLUT_DOUBLE);
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
-	glutReshapeFunc(reshape_iso);
-	glutDisplayFunc(display_iso);
+	glutReshapeFunc(reshape);
+	glutDisplayFunc(display);
 	glutMotionFunc(mouse_motion);
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
 	glutKeyboardFunc(keyboard);
@@ -115,22 +138,26 @@ int	main(int ac, char **av)
 						switch(map->scenario)
 					{
 						case 0:
-						scenario_rain(map);
-						break;
+                            scenario_rain(map);
+                            break;
 						case 1:
-						scenario_rain_middle(map);
-						break;
+                            scenario_rain_middle(map);
+                            break;
 						case 2:
-						scenario_srilanka(map);
-						break;
+                            scenario_srilanka(map);
+                            break;
 						case 3:
-						scenario_riviere(map);
-						break;
+                            scenario_riviere(map);
+                            break;
 						case 4:
-						flood_uniform(map);
-						break;
+                            flood_uniform(map);
+                            break;
+						case 5:
+                            flood_from_borders(map);
+                            break;
 						default:
-						scenario_rain(map);
+                            scenario_rain(map);
+                            break;
 					}
 					map->apply_gravity();
 
@@ -155,12 +182,12 @@ int	main(int ac, char **av)
 				if (q.size() > RENDER_AHEAD / 2.0)
 				{
 					mtx.unlock();
-					usleep(FPS * 1000);
+                    idle();
+                    idle();
 				}
 				mtx.unlock();
-				sched_yield();
+				idle();
 			}
-			exit(0);
 		}
 		catch (std::exception & e)
 		{

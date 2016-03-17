@@ -97,7 +97,7 @@ void mouse_motion(int x, int y)
 	static GLdouble oldx = x, oldy = y;
 	if ((x - oldx) != 0)
 	{
-		glRotatef(4.0f, 0, 0.0f, (x - oldx));
+		glRotatef(1.0f, 0, 0.0f, (x - oldx));
 	}
 	oldx = x; oldy = y;
 }

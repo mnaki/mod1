@@ -37,6 +37,8 @@ void reshape_iso(int w, int h)
 
 void display_iso(void)
 {
+    if (!running)
+        exit(0);
 	int w = glutGet(GLUT_WINDOW_WIDTH);
 	int h = glutGet(GLUT_WINDOW_HEIGHT);
 
@@ -86,7 +88,7 @@ void display_iso(void)
 	}
 	for (GLfloat x = 0; x < cmap.width - 1; x++)
 	{
-		GLfloat y = cmap.height - 2; 
+		GLfloat y = cmap.height - 2;
 		int tl = cmap.data[x][y].terrain_height;
 		float wl = cmap.data[x][y].water_level;
 		for (float i = 0 ; i <= tl + wl ; i++)
@@ -100,7 +102,7 @@ void display_iso(void)
 	}
 	for (GLfloat y = 0; y < cmap.height - 1; y++)
 	{
-		GLfloat x = cmap.width - 2; 
+		GLfloat x = cmap.width - 2;
 		int tl = cmap.data[x][y].terrain_height;
 		float wl = cmap.data[x][y].water_level;
 		for (float i = 0 ; i <= tl + wl ; i++)

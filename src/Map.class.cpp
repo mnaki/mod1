@@ -12,39 +12,30 @@
 
 void Map::update_rain(void)
 {
-    for (auto & drop : this->rain_drops)
+    std::remove_if(rain_drops.begin(), rain_drops.end(), [this](RainDrop & drop)
     {
-        if (drop.altitude <= data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level)
+        if (drop.altitude > data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level)
         {
-            drop_water(drop.x, drop.y, drop.mass);
+            int mass = drop.mass * 10.0f;
+            drop.altitude -= mass * mass;
+            return false;
         }
         else
         {
-            drop.altitude--;
+            drop_water(drop.x, drop.y, drop.mass);
+            return true;
         }
-    }
-    std::remove_if(rain_drops.begin(), rain_drops.end(), [](const RainDrop & drop)
-    {
-        return drop.altitude <= data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level;
     });
-}
-
-void Map::draw_raindrops(void) const
-{
-    glEnable(GL_POINT_SMOOTH);
-    glBegin(GL_POINTS);
-    for (auto & drop : this->rain_drops)
-    {
-        glEnable(GL_PROGRAM_POINT_SIZE); // TODO: mettre cette ligne en dehors de la loop (performance++?)
-        gl_PointSize = drop.mass;
-        glVertex3i(drop.x, drop.y, drop.altitude)
-    }
-    glEnd();
 }
 
 void Map::drop_rain(int x, int y, float mass)
 {
-    this->rain_drops.push_back(RainDrop{ x, y, 1000, mass });
+    RainDrop drop;
+    drop.x = x;
+    drop.y = y;
+    drop.altitude = data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level + width;
+    drop.mass = mass;
+    rain_drops.push_back(drop);
 }
 
 void Map::drop_water(int x, int y, float quantity)

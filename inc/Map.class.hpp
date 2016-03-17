@@ -11,6 +11,7 @@
 #include <atomic>
 #include <mutex>
 #include <thread>
+#include <list>
 #include "MapPoint.class.hpp"
 
 # define YELLOW "\033[1;33m"
@@ -24,7 +25,7 @@ struct RainDrop
 {
     int x = 0;
     int y = 0;
-    int altitude = 1000;
+    int altitude = 0;
     float mass = 0.0f;
 };
 
@@ -42,7 +43,6 @@ class Map
     	Map(int width = 1, int height = 1, int scenario = 0);
     	~Map() = default;
         void        update_rain(void);
-        void        draw_raindrops(void) const;
         void        drop_rain(int x, int y, float mass);
     	void		drop_water(int x, int y, float quantity);
     	void		set_water(int x, int y, float value);

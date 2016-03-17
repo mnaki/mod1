@@ -52,6 +52,8 @@ void reshape(int w, int h)
 
 void display(void)
 {
+    if (!running)
+        exit(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 
 	mtx.lock();
@@ -97,7 +99,17 @@ void display(void)
 		glEnd();
 	}
 
-    cmap.draw_raindrops();
+    glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_POINT_SIZE);
+    for (auto const & drop : cmap.rain_drops)
+    {
+        glPointSize(drop.mass * 16.0f);
+        glBegin(GL_POINTS);
+            glColor4f( 0.0, 0.25, 1.0f, 0.5f);
+            glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
+        glEnd();
+    }
+
 
 	glutSwapBuffers();
 	idle();

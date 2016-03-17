@@ -42,6 +42,8 @@ void reshape_vue_haute(int w, int h)
 
 void display_vue_haute(void)
 {
+    if (!running)
+        exit(0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	mtx.lock();

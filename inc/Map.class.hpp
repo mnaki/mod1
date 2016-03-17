@@ -23,10 +23,11 @@
 
 struct RainDrop
 {
-    int x = 0;
-    int y = 0;
-    int altitude = 0;
+    float x = 0.0f;
+    float y = 0.0f;
+    float altitude = 0.0f;
     float mass = 0.0f;
+    bool is_snow = false;
 };
 
 class Map
@@ -44,6 +45,7 @@ class Map
     	~Map() = default;
         void        update_rain(void);
         void        drop_rain(int x, int y, float mass);
+        void        drop_snow(int x, int y, float mass);
     	void		drop_water(int x, int y, float quantity);
     	void		set_water(int x, int y, float value);
 		int			get_hauteur_max(void) const ;

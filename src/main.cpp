@@ -54,6 +54,16 @@ void scenario_rain(Map * map)
 	}
 }
 
+void scenario_snow(Map * map)
+{
+	for (int x = 0; x < map->width ; x += 1) {
+		for (int y = 0; y < map->height ; y += 1) {
+			if (rand() % 1000000 == 0)
+				map->drop_snow(x, y, 0.10f);
+		}
+	}
+}
+
 void scenario_rain_middle(Map * map)
 {
 	for (int x = map->width / 2 - map->width / 70; x < map->width / 2 + map->width / 70; x++) {
@@ -153,6 +163,9 @@ int	main(int ac, char **av)
 	                            break;
 							case 5:
 	                            flood_from_borders(map);
+	                            break;
+							case 6:
+	                            scenario_snow(map);
 	                            break;
 							default:
 	                            scenario_rain(map);

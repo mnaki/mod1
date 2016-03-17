@@ -106,13 +106,24 @@ void display(void)
     glEnable(GL_POINT_SIZE);
     for (auto const & drop : cmap.rain_drops)
     {
-        glPointSize(drop.mass * 16.0f);
-        glBegin(GL_POINTS);
-            glColor4f( 0.0f, 0.25, 1.0f, 0.5f);
-            glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
-            glColor4f( 0.0f, 1.0f, 1.0f, 0.5f);
-            glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width - drop.mass * 4.0f);
-        glEnd();
+            if (drop.is_snow)
+            {
+                glPointSize(drop.mass * 200.0f);
+                glBegin(GL_POINTS);
+                glColor4f( 1.0f, 1.0f, 1.0f, 1.0f);
+                glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
+                glEnd();
+            }
+            else
+            {
+                glPointSize(drop.mass * 16.0f);
+                glBegin(GL_POINTS);
+                glColor4f( 0.0f, 0.25f, 1.0f, 0.5f);
+                glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
+                glColor4f( 0.0f, 1.0f, 1.0f, 0.5f);
+                glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width - drop.mass * 4.0f);
+                glEnd();
+            }
     }
 
 

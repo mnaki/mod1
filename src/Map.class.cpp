@@ -18,10 +18,21 @@ void Map::update_rain(void)
         {
             return true;
         }
-        if (drop.altitude > data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level - 1)
+        else if (drop.altitude > data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level - 1)
         {
-            int mass = drop.mass * 10.0f;
-            drop.altitude -= mass * mass;
+            if (drop.is_snow)
+            {
+                drop.altitude -= drop.mass * 7 * drop.mass * 7;
+                float mouvement = 2.0f * drop.mass;
+                if (rand() == 0)
+                    drop.x += mouvement;
+                if (rand() == 0)
+                    drop.y += mouvement;
+            }
+            else
+            {
+                drop.altitude -= drop.mass * 10.0f * drop.mass * 10.0f;
+            }
             return false;
         }
         else
@@ -32,6 +43,17 @@ void Map::update_rain(void)
         return true;
     });
     rain_drops.erase(new_end, rain_drops.end());
+}
+
+void Map::drop_snow(int x, int y, float mass)
+{
+    RainDrop drop;
+    drop.x = x;
+    drop.y = y;
+    drop.altitude = data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level + width;
+    drop.mass = mass;
+    drop.is_snow = true;
+    rain_drops.push_back(drop);
 }
 
 void Map::drop_rain(int x, int y, float mass)

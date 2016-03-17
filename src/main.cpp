@@ -180,7 +180,12 @@ int	main(int ac, char **av)
                         if (deja_vidange == false)
                         {
                             auto ref = map->get_hauteur_max();
-                            map->draw_cone(map->width / 2, map->height / 2, map->width * 0.4, ref * 30, true);
+                            for (int x = map->width * 0.2; x < map->width * 0.8; x++)
+                            for (int y = map->width * 0.2; y < map->height * 0.8; y++)
+                            {
+                                map->data[x][y].terrain_height = -20;
+                            }
+                            map->draw_cone(map->width / 2, map->height / 2, map->width * 0.2, ref * 150, true);
                             std::cout << "vidange" << std::endl;
                         }
                         deja_vidange = true;

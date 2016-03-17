@@ -133,32 +133,31 @@ int	main(int ac, char **av)
 				mtx.lock();
 				if (q.size() <= RENDER_AHEAD)
 				{
-					mtx.unlock();
 					if (pour_water)
 						switch(map->scenario)
-					{
-						case 0:
-                            scenario_rain(map);
-                            break;
-						case 1:
-                            scenario_rain_middle(map);
-                            break;
-						case 2:
-                            scenario_srilanka(map);
-                            break;
-						case 3:
-                            scenario_riviere(map);
-                            break;
-						case 4:
-                            flood_uniform(map);
-                            break;
-						case 5:
-                            flood_from_borders(map);
-                            break;
-						default:
-                            scenario_rain(map);
-                            break;
-					}
+						{
+							case 0:
+	                            scenario_rain(map);
+	                            break;
+							case 1:
+	                            scenario_rain_middle(map);
+	                            break;
+							case 2:
+	                            scenario_srilanka(map);
+	                            break;
+							case 3:
+	                            scenario_riviere(map);
+	                            break;
+							case 4:
+	                            flood_uniform(map);
+	                            break;
+							case 5:
+	                            flood_from_borders(map);
+	                            break;
+							default:
+	                            scenario_rain(map);
+	                            break;
+						}
 					map->apply_gravity();
 
 					// bordures nulles
@@ -177,7 +176,6 @@ int	main(int ac, char **av)
 						map->data[map->width-1][y].water_level = 0;
 					}
 					q.push(*map);
-					mtx.unlock();
 				}
 				if (q.size() > RENDER_AHEAD / 2.0)
 				{
@@ -185,7 +183,10 @@ int	main(int ac, char **av)
                     idle();
                     idle();
 				}
-				mtx.unlock();
+				else
+				{
+					mtx.unlock();
+				}
 				idle();
 			}
 		}

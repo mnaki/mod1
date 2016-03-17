@@ -44,6 +44,7 @@ void display_iso(void)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 
+	Map cmap;
 	mtx.lock();
 	if (q.size() <= 0)
 	{
@@ -51,16 +52,18 @@ void display_iso(void)
 		std::cout << "no frame" << std::endl;
 		return ;
 	}
+	else
+	{
+		cmap = q.front();
 
-	Map cmap = q.front();
+		if (conf_skip_frames)
+			cmap = q.back();
 
-	if (conf_skip_frames)
-		cmap = q.back();
+		if (!conf_pause)
+			q.pop();
+		mtx.unlock();
+	}
 
-	if (!conf_pause)
-		q.pop();
-
-	mtx.unlock();
 
 	static float hauteur_ref = -1.0f;
 	static float hauteur_ref2 = -1.0f;

@@ -56,23 +56,26 @@ void display(void)
         exit(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 
-	mtx.lock();
-	if (q.size() <= 0)
-	{
-		mtx.unlock();
-		std::cout << "no frame" << std::endl;
-		return ;
-	}
 
-	Map cmap = q.front();
+		Map cmap;
+		mtx.lock();
+		if (q.size() <= 0)
+		{
+			mtx.unlock();
+			std::cout << "no frame" << std::endl;
+			return ;
+		}
+		else
+		{
+			cmap = q.front();
 
-	if (conf_skip_frames)
-		cmap = q.back();
+			if (conf_skip_frames)
+				cmap = q.back();
 
-	if (!conf_pause)
-		q.pop();
-
-	mtx.unlock();
+			if (!conf_pause)
+				q.pop();
+			mtx.unlock();
+		}
 
 	// if (conf_rotate)
 	// 	rotate -= 45.0f/8.0f;

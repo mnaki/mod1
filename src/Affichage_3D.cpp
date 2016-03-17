@@ -97,6 +97,8 @@ void display(void)
 		glEnd();
 	}
 
+    cmap.draw_raindrops();
+
 	glutSwapBuffers();
 	idle();
 }

@@ -28,7 +28,7 @@ void scenario_rain(Map * map)
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
 			if ((rand() % 2 + 1) > 1)
-				map->drop_water(x, y, 0.01f);
+				map->drop_rain(x, y, 10.0f);
 		}
 	}
 }

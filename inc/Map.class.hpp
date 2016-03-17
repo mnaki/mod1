@@ -20,11 +20,20 @@
 # define CYAN "\033[1;36m"
 # define BLUE "\033[1;34m"
 
+struct RainDrop
+{
+    int x = 0;
+    int y = 0;
+    int altitude = 1000;
+    float mass = 0.0f;
+};
+
 class Map
 {
     public:
 
     	std::vector< std::vector<MapPoint> > data;
+        std::vector< RainDrop >              rain_drops;
     	int width;
     	int height;
 		int conf_marge_bocal = 1;
@@ -32,6 +41,9 @@ class Map
 
     	Map(int width = 1, int height = 1, int scenario = 0);
     	~Map() = default;
+        void        update_rain(void);
+        void        draw_raindrops(void) const;
+        void        drop_rain(int x, int y, float mass);
     	void		drop_water(int x, int y, float quantity);
     	void		set_water(int x, int y, float value);
 		int			get_hauteur_max(void) const ;

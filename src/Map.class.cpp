@@ -11,6 +11,43 @@
 #include "Map.class.hpp"
 #include "general.hpp"
 
+void Map::update_rain(void)
+{
+    for (auto & drop : this->rain_drops)
+    {
+        if (drop.altitude <= data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level)
+        {
+            drop_water(drop.x, drop.y, drop.mass);
+        }
+        else
+        {
+            drop.altitude--;
+        }
+    }
+    std::remove_if(rain_drops.begin(), rain_drops.end(), [](const RainDrop & drop)
+    {
+        return drop.altitude <= data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level;
+    });
+}
+
+void Map::draw_raindrops(void) const
+{
+    glEnable(GL_POINT_SMOOTH);
+    glBegin(GL_POINTS);
+    for (auto & drop : this->rain_drops)
+    {
+        glEnable(GL_PROGRAM_POINT_SIZE); // TODO: mettre cette ligne en dehors de la loop (performance++?)
+        gl_PointSize = drop.mass;
+        glVertex3i(drop.x, drop.y, drop.altitude)
+    }
+    glEnd();
+}
+
+void Map::drop_rain(int x, int y, float mass)
+{
+    this->rain_drops.push_back(RainDrop{ x, y, 1000, mass });
+}
+
 void Map::drop_water(int x, int y, float quantity)
 {
 	this->data[x][y].water_level = this->data[x][y].water_level + quantity;
@@ -61,6 +98,7 @@ void Map::apply_gravity(void)
 	static std::random_device rd;
 	static std::mt19937 g(rd());
 
+    update_rain();
 	for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
 	{
 		threads[thread_id] = std::thread([this, thread_id]()

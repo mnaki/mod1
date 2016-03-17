@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include <limits>
 #include <cstddef>
 #include <random>
@@ -94,60 +93,69 @@ typedef struct toto
 
 void Map::apply_gravity(void)
 {
-	std::thread threads[CONF_NUM_CORES];
+	std::vector<std::thread> threads(CONF_NUM_CORES);
 	static std::random_device rd;
 	static std::mt19937 g(rd());
 
     update_rain();
-	for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
-	{
-		threads[thread_id] = std::thread([this, thread_id]()
+    try
+    {
+		for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
 		{
+			threads[thread_id] = std::thread([this, thread_id]()
 			{
-				cpu_set_t cpuset;
-				pthread_t thread;
-				thread = pthread_self();
-				CPU_ZERO(&cpuset);
-				CPU_SET(thread_id, &cpuset);
-				pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
-			}
-			for (int x = thread_id * (this->width / CONF_NUM_CORES) ; x < (thread_id+1.0) * (this->width / CONF_NUM_CORES) ; x++)
-			{
-				std::vector<tata*> points;
-				for (int i = 1 ; i <= 1 ; i++)
+				#ifdef __LINUX__
 				{
-					tata *a;
-					a = new tata();	a->i = i;	a->j = 0;	points.push_back(a);
-					a = new tata();	a->i = 0;	a->j = i;	points.push_back(a);
-					a = new tata();	a->i = -i;	a->j = 0;	points.push_back(a);
-					a = new tata();	a->i = 0;	a->j = -i;	points.push_back(a);
-
-					a = new tata();	a->i = -i;	a->j = -i;	points.push_back(a);
-					a = new tata();	a->i = i;	a->j = i;	points.push_back(a);
-					a = new tata();	a->i = -i;	a->j = i;	points.push_back(a);
-					a = new tata();	a->i = i;	a->j = -i;	points.push_back(a);
+					cpu_set_t cpuset;
+					pthread_t thread;
+					thread = pthread_self();
+					CPU_ZERO(&cpuset);
+					CPU_SET(thread_id, &cpuset);
+					pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
 				}
-
-				for (int y = 0 ; y < this->height ; y++)
+				#endif
+				for (int x = thread_id * (this->width / CONF_NUM_CORES) ; x < (thread_id+1.0) * (this->width / CONF_NUM_CORES) ; x++)
 				{
-					float old_val = 0;
-					while (this->data[x][y].water_level > 0 && this->data[x][y].water_level != old_val)
+					std::vector<tata*> points;
+					for (int i = 1 ; i <= 1 ; i++)
 					{
-						old_val = this->data[x][y].water_level;
-						std::shuffle(points.begin(), points.end(), g);
-						for (float pression = 1 ; pression < this->data[x][y].water_level + 1.1f ; pression++)
+						tata *a;
+						a = new tata();	a->i = i;	a->j = 0;	points.push_back(a);
+						a = new tata();	a->i = 0;	a->j = i;	points.push_back(a);
+						a = new tata();	a->i = -i;	a->j = 0;	points.push_back(a);
+						a = new tata();	a->i = 0;	a->j = -i;	points.push_back(a);
+
+						a = new tata();	a->i = -i;	a->j = -i;	points.push_back(a);
+						a = new tata();	a->i = i;	a->j = i;	points.push_back(a);
+						a = new tata();	a->i = -i;	a->j = i;	points.push_back(a);
+						a = new tata();	a->i = i;	a->j = -i;	points.push_back(a);
+					}
+
+					for (int y = 0 ; y < this->height ; y++)
+					{
+						float old_val = 0;
+						while (this->data[x][y].water_level > 0 && this->data[x][y].water_level != old_val)
 						{
-							for (auto iter = points.begin(); iter != points.end(); ++iter)
-								ecoulement_unitaire(x, y, (*iter)->i * pression, (*iter)->j * pression);
+							old_val = this->data[x][y].water_level;
+							std::shuffle(points.begin(), points.end(), g);
+							for (float pression = 1 ; pression < this->data[x][y].water_level + 1.1f ; pression++)
+							{
+								for (auto iter = points.begin(); iter != points.end(); ++iter)
+									ecoulement_unitaire(x, y, (*iter)->i * pression, (*iter)->j * pression);
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
+		for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
+		{
+			threads[thread_id].join();
+		}
 	}
-	for (int thread_id = 0 ; thread_id < CONF_NUM_CORES ; thread_id++)
+	catch (std::exception const & e)
 	{
-		threads[thread_id].join();
+		std::cout << e.what() << std::endl;
 	}
 }
 

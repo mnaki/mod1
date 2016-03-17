@@ -58,9 +58,9 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	struct timespec t{ 0, 10000000 };
-	nanosleep(&t, NULL);
-	sched_yield();
+	// struct timespec t{ 0, 10000000 };
+	// nanosleep(&t, NULL);
+	// sched_yield();
 }
 
 void glutTimer(int te)
@@ -149,20 +149,16 @@ int	main(int ac, char **av)
 						map->data[0][y].water_level = 0;
 						map->data[map->width-1][y].water_level = 0;
 					}
-					mtx.lock();
 					q.push(*map);
-				}
-				if (q.size() >= 2)
-				{
-					idle();
 					mtx.unlock();
 				}
-				else
+				if (q.size() > RENDER_AHEAD / 2.0)
 				{
 					mtx.unlock();
+					usleep(FPS * 1000);
 				}
 				mtx.unlock();
-				idle(); // Pour que le while ne monopolise pas tout le temps CPU et que l'interface reste fluide
+				sched_yield();
 			}
 			exit(0);
 		}

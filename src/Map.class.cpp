@@ -12,9 +12,13 @@
 
 void Map::update_rain(void)
 {
-    std::remove_if(rain_drops.begin(), rain_drops.end(), [this](RainDrop & drop)
+    auto new_end = std::remove_if(rain_drops.begin(), rain_drops.end(), [this](RainDrop & drop)
     {
-        if (drop.altitude > data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level)
+        if (drop.x <= 1 || drop.y <= 1 || drop.x >= width - 1 - 1 || drop.y >= height - 1 - 1)
+        {
+            return true;
+        }
+        if (drop.altitude > data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level - 1)
         {
             int mass = drop.mass * 10.0f;
             drop.altitude -= mass * mass;
@@ -25,7 +29,9 @@ void Map::update_rain(void)
             drop_water(drop.x, drop.y, drop.mass);
             return true;
         }
+        return true;
     });
+    rain_drops.erase(new_end, rain_drops.end());
 }
 
 void Map::drop_rain(int x, int y, float mass)

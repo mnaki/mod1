@@ -105,8 +105,10 @@ void display(void)
     {
         glPointSize(drop.mass * 16.0f);
         glBegin(GL_POINTS);
-            glColor4f( 0.0, 0.25, 1.0f, 0.5f);
+            glColor4f( 0.0f, 0.25, 1.0f, 0.5f);
             glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
+            glColor4f( 0.0f, 1.0f, 1.0f, 0.5f);
+            glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width - drop.mass * 4.0f);
         glEnd();
     }
 

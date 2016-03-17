@@ -142,7 +142,7 @@ int	main(int ac, char **av)
 			{
 				if (q.size() < RENDER_AHEAD)
 				{
-					if (pour_water)
+					if (pour_water && !vidange)
                     {
 						switch(map->scenario)
 						{
@@ -174,6 +174,18 @@ int	main(int ac, char **av)
                     }
 					map->apply_gravity();
 
+                    if (vidange)
+                    {
+                        static int deja_vidange = false;
+                        if (deja_vidange == false)
+                        {
+                            auto ref = map->get_hauteur_max();
+                            map->draw_cone(map->width / 2, map->height / 2, map->width * 0.4, ref * 30, true);
+                            std::cout << "vidange" << std::endl;
+                        }
+                        deja_vidange = true;
+                    }
+
 					// bordures nulles
 					for (int x = 0; x < map->width; x++)
 					{
@@ -189,6 +201,7 @@ int	main(int ac, char **av)
 						map->data[0][y].water_level = 0;
 						map->data[map->width-1][y].water_level = 0;
 					}
+
 					q.push(*map);
 				}
 				if (q.size() > 2)

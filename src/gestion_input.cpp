@@ -11,6 +11,7 @@ bool	conf_pause =		CONFIG_PAUSE;
 GLfloat target_rotate =		GLF_TARGET_ROTATE;
 std::atomic<bool>           pour_water(true);
 std::atomic<bool>           running(true);
+std::atomic<bool>           vidange(false);
 
 void	keyboard(unsigned char ch, int x, int y)
 {
@@ -87,6 +88,10 @@ void	keyboard(unsigned char ch, int x, int y)
 			reshape(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 			glutPostRedisplay();
 			break;
+        case 'v':
+        case 'V':
+            vidange = true;
+            break;
 		default:
 			break;
 	}

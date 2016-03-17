@@ -20,5 +20,6 @@ extern float				target_rotate;
 extern std::atomic<bool>	pour_water;
 extern std::atomic<bool>	running;
 extern int                  CONF_NUM_CORES;
+extern std::atomic<bool>    vidange;
 
 void idle();

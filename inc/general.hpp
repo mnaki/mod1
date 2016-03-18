@@ -7,6 +7,9 @@
 #define FPS (30.0)
 #define RENDER_AHEAD (FPS * 2.0)
 
+#define WIDTH 200
+#define HEIGHT 200
+
 extern std::queue<Map>		q;
 extern std::mutex			mtx;
 extern bool					conf_skip_frames;

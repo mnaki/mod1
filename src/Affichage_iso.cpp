@@ -8,7 +8,9 @@ void	setColor(float wl, float tl, float hr)
 	float hauteur_ref2 = hr * 2.0f;
 
 	GLfloat deepness = (wl + tl + 0.1f) / (tl + 5.0f);
-	if (wl == 0)
+	if (wl > 0.0f)
+		glColor4f( 0.0f, 0.4f / deepness, 0.9f / deepness, 0.75f );
+	else
 	{
 		float hauteur_map = tl;
 		if (hauteur_map < hauteur_ref)
@@ -19,8 +21,6 @@ void	setColor(float wl, float tl, float hr)
 			glColor4f( 0.0f + h / hauteur_ref2, 1.0f - h / hauteur_ref2, 0.0f, 1.0f );
 		}
 	}
-	else
-		glColor4f( 0.0f, 0.4f / deepness, 0.9f / deepness, 0.75f );
 }
 
 void reshape_iso(int w, int h)
@@ -66,12 +66,8 @@ void display_iso(void)
 
 
 	static float hauteur_ref = -1.0f;
-	static float hauteur_ref2 = -1.0f;
 	if (hauteur_ref == -1.0f)
-	{
 		hauteur_ref = cmap.get_hauteur_max() / 3.0f;
-		hauteur_ref2 = hauteur_ref * 2.0f;
-	}
 
 	int origin_x = w / 2;
 	int origin_y = h / 20;

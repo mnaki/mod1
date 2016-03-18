@@ -2,9 +2,8 @@
 #include <fstream>
 #include <stdlib.h>
 #include "parser.hpp"
+#include "general.hpp"
 
-#define WIDTH 200
-#define HEIGHT 200
 
 Map *init_from_fichier(std::string s)
 {

@@ -46,26 +46,25 @@ void display_vue_haute(void)
         exit(0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-		Map cmap;
-		mtx.lock();
-		if (q.size() <= 0)
-		{
-			mtx.unlock();
-			std::cout << "no frame" << std::endl;
-			return ;
-		}
-		else
-		{
-			cmap = q.front();
+	Map cmap;
+	mtx.lock();
+	if (q.size() <= 0)
+	{
+		mtx.unlock();
+		std::cout << "no frame" << std::endl;
+		return ;
+	}
+	else
+	{
+		cmap = q.front();
 
-			if (conf_skip_frames)
-				cmap = q.back();
+		if (conf_skip_frames)
+			cmap = q.back();
 
-			if (!conf_pause)
-				q.pop();
-				mtx.unlock();
-		}
-
+		if (!conf_pause)
+			q.pop();
+		mtx.unlock();
+	}
 
 	int origin_x = glutGet(GLUT_WINDOW_WIDTH) / 2;
 	int origin_y = glutGet(GLUT_WINDOW_HEIGHT) / 20;

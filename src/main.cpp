@@ -49,7 +49,7 @@ void scenario_rain(Map * map)
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
 			if (rand() % 10000 == 0)
-				map->drop_rain(x, y, 0.30f);
+				map->drop_rain(x, y, 0.20f);
 		}
 	}
 }
@@ -59,18 +59,17 @@ void scenario_snow(Map * map)
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
 			if (rand() % 1000000 == 0)
-				map->drop_snow(x, y, 0.10f);
+				map->drop_snow(x, y, 0.20f);
 		}
 	}
 }
 
 void scenario_rain_middle(Map * map)
 {
-	for (int x = map->width / 2 - map->width / 70; x < map->width / 2 + map->width / 70; x++) {
-		for (int y = map->height / 2 - map->height / 70; y < map->height / 2 + map->height / 70; y++) {
-			map->drop_water(x, y, 2);
-		}
-	}
+    int size = 10;
+    for (int x = 80 - size; x < 80 + size; x++)
+    for (int y = 60 - size; y < 60 + size; y++)
+        map->drop_rain(x, y, 0.2f * (rand() % 100 == 0));
 }
 
 void scenario_srilanka(Map * map)
@@ -109,7 +108,9 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 	srand(time(NULL));
 
-	CONF_NUM_CORES = std::thread::hardware_concurrency();
+	CONF_NUM_CORES = std::thread::hardware_concurrency() - 1;
+    if (CONF_NUM_CORES <= 0)
+        CONF_NUM_CORES = 1;
 	std::cout << "CONF_NUM_CORES = " << CONF_NUM_CORES << std::endl;
 
 	Map *map;

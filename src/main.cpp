@@ -48,8 +48,8 @@ void scenario_rain(Map * map)
 {
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
-			if (rand() % 10000 == 0)
-				map->drop_rain(x, y, 0.20f);
+			if (rand() % 5000 == 0)
+				map->drop_rain(x, y, 0.75f);
 		}
 	}
 }
@@ -59,25 +59,20 @@ void scenario_snow(Map * map)
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
 			if (rand() % 10000 == 0)
-				map->drop_snow(x, y, 0.20f);
+				map->drop_snow(x, y, 0.0f);
 		}
 	}
 }
 
 void scenario_rain_middle(Map * map)
 {
-    int size = 10;
-	int px = 80, py = 60;
+    int size = 20;
+	int px = 100, py = 25;
     for (int x = px - size; x < px + size; x++)
     for (int y = py - size; y < py + size; y++)
-        map->drop_rain(x, y, 0.2f * (rand() % 100 == 0));
+        if (rand() % 10 == 0)
+			map->drop_rain(x, y, 1.5f);
 
-	size = 6;
-	px = 130;
-	py = 60;
-	for (int x = px - size; x < px + size; x++)
-	for (int y = py - size; y < py + size; y++)
-		map->drop_rain(x, y, 0.2f * (rand() % 10 == 0));
 }
 
 void scenario_srilanka(Map * map)
@@ -93,7 +88,7 @@ void scenario_riviere(Map * map)
 {
     static int make_it_rain = 1;
     if (make_it_rain % 10 == 0)
-        map->drop_rain(40, map->height / 3, 1.0f);
+        map->drop_rain(40, map->height / 3, 20.0f);
     make_it_rain++;
 }
 

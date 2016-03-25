@@ -14,33 +14,25 @@ void Map::update_rain(void)
 {
     auto new_end = std::remove_if(rain_drops.begin(), rain_drops.end(), [this](RainDrop & drop)
     {
-        if (drop.x <= 1 || drop.y <= 1 || drop.x >= width - 1 - 1 || drop.y >= height - 1 - 1)
+        int x = drop.x;
+        int y = drop.y;
+        float mass = drop.mass;
+        int altitude = drop.altitude;
+
+        if (x <= 1 || y <= 1 || x >= width - 1 - 1 || y >= height - 1 - 1)
         {
             return true;
         }
-        else if (drop.altitude > data[drop.x][drop.y].terrain_height + data[drop.x][drop.y].water_level - 1)
+        else if (altitude <= data[x][y].terrain_height + data[x][y].water_level)
         {
-            if (drop.is_snow)
-            {
-                drop.altitude -= drop.mass * 7 * drop.mass * 7;
-                float mouvement = 2.0f * drop.mass;
-                if (rand() == 0)
-                    drop.x += mouvement;
-                if (rand() == 0)
-                    drop.y += mouvement;
-            }
-            else
-            {
-                drop.altitude -= drop.mass * 10.0f * drop.mass * 10.0f;
-            }
-            return false;
+            drop_water(x, y, mass);
+            return true;
         }
         else
         {
-            drop_water(drop.x, drop.y, drop.mass);
-            return true;
+            drop.altitude -= 0.1f * (rand() % 100);
+            return false;
         }
-        return true;
     });
     rain_drops.erase(new_end, rain_drops.end());
 }

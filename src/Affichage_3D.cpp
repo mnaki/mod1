@@ -16,16 +16,16 @@ static void set_color(Map const & cmap, int x, int y)
 
 	GLfloat deepness = (cmap.data[x][y].water_level + cmap.data[x][y].terrain_height + 0.1f) / (cmap.data[x][y].terrain_height + 5.0f);
 	if (cmap.data[x][y].water_level > 0.0f)
-		glColor4f( 0.0f, 0.4f / deepness, 0.9f / deepness, 0.75f );
+		glColor4f( 0.0f, 0.6f / deepness, 0.8f / deepness, 1.0f );
 	else
 	{
 		float hauteur_map = cmap.data[x][y].terrain_height;
 		if (hauteur_map < hauteur_ref)
-			glColor4f( 1.0f - hauteur_map / hauteur_ref, 1.0f, 1.0f - hauteur_map / hauteur_ref, 1.0f );
+			glColor4f( 1.0f - (hauteur_map / hauteur_ref), 1.0f, 0.5f - hauteur_map / hauteur_ref, 1.0f );
 		else
 		{
 			float h = hauteur_map - hauteur_ref;
-			glColor4f( 0.0f + h / hauteur_ref2, 1.0f - h / hauteur_ref2, 0.0f, 1.0f );
+			glColor4f( h * 0.7f / hauteur_ref, h * 0.7f / hauteur_ref + 1.0f, h * 0.7f / hauteur_ref, 1.0f );
 		}
 	}
 }

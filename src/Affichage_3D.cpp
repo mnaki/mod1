@@ -57,30 +57,25 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear Screen And Depth Buffer
 
 
-		Map cmap;
-		mtx.lock();
-		if (q.size() <= 0)
-		{
-			mtx.unlock();
-			std::cout << "no frame" << std::endl;
-			return ;
-		}
-		else
-		{
-			cmap = q.front();
+	Map cmap;
+	mtx.lock();
+	if (q.size() <= 0)
+	{
+		mtx.unlock();
+		std::cout << "no frame" << std::endl;
+		return ;
+	}
+	else
+	{
+		cmap = q.front();
 
-			if (conf_skip_frames)
-				cmap = q.back();
+		if (conf_skip_frames)
+			cmap = q.back();
 
-			if (!conf_pause)
-				q.pop();
-			mtx.unlock();
-		}
-
-	// if (conf_rotate)
-	// 	rotate -= 45.0f/8.0f;
-
-	// rotate += (target_rotate + - rotate) / 8.0f;
+		if (!conf_pause)
+			q.pop();
+		mtx.unlock();
+	}
 
 	for (GLfloat x = 0; x < cmap.width - 1; x++)
 	{
@@ -104,27 +99,30 @@ void display(void)
 
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_POINT_SIZE);
+	glPointSize(1.0f);
+	glBegin(GL_POINTS);
     for (auto const & drop : cmap.rain_drops)
     {
             if (drop.is_snow)
             {
-                glPointSize(drop.mass * 200.0f);
-                glBegin(GL_POINTS);
+            //     glPointSize(drop.mass * 200.0f);
+            //     glBegin(GL_POINTS);
                 glColor4f( 1.0f, 1.0f, 1.0f, 1.0f);
                 glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
-                glEnd();
+            //     glEnd();
             }
             else
             {
-                glPointSize(drop.mass * 16.0f);
-                glBegin(GL_POINTS);
+                // glPointSize(drop.mass * 16.0f);
+                // glBegin(GL_POINTS);
                 glColor4f( 0.0f, 0.25f, 1.0f, 0.5f);
                 glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
                 glColor4f( 0.0f, 1.0f, 1.0f, 0.5f);
                 glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width - drop.mass * 4.0f);
-                glEnd();
+                // glEnd();
             }
     }
+	glEnd();
 
 	glutSwapBuffers();
 	idle();

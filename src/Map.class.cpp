@@ -180,7 +180,7 @@ void Map::apply_gravity(void)
 
 void	Map::ecoulement_unitaire(int x, int y, int i, int j)
 {
-	if ((x+i >= 0 + conf_marge_bocal && x+i < width - (1 + conf_marge_bocal) && y+j >= 0 + conf_marge_bocal && y+j < height - (1 + conf_marge_bocal))
+	if ((x+i >= conf_marge_bocal && x+i < width - conf_marge_bocal - 1 && y+j >= conf_marge_bocal && y+j < height - conf_marge_bocal - 1)
 			&& resistance(this->data[x+i][y+j]) < resistance(x, y))
 	{
 		this->data[x][y].water_level = this->data[x][y].water_level - 0.1f;

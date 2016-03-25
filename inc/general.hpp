@@ -4,8 +4,8 @@
 
 #include "Map.class.hpp"
 
-#define FPS (25.0)
-#define RENDER_AHEAD (FPS / 10.0)
+#define FPS (50.0)
+#define RENDER_AHEAD 4
 
 #define WIDTH 200
 #define HEIGHT 200

@@ -27,20 +27,20 @@ void flood_from_borders(Map * map)
 {
     for (int y = 0; y < map->height ; y += 1)
     {
-        map->set_water(0, y, map->get_hauteur_max());
+        map->set_water(1, y, map->get_hauteur_max());
     }
     for (int y = 0; y < map->height ; y += 1)
     {
-        map->set_water(map->width - 1, y, map->get_hauteur_max());
+        map->set_water(map->width - 2, y, map->get_hauteur_max());
     }
 
     for (int x = 0; x < map->width ; x += 1)
     {
-        map->set_water(x, 0, map->get_hauteur_max());
+        map->set_water(x, 1, map->get_hauteur_max());
     }
     for (int x = 0; x < map->width ; x += 1)
     {
-        map->set_water(x, map->height - 1, map->get_hauteur_max());
+        map->set_water(x, map->height - 2, map->get_hauteur_max());
     }
 }
 
@@ -58,7 +58,7 @@ void scenario_snow(Map * map)
 {
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
-			if (rand() % 1000000 == 0)
+			if (rand() % 10000 == 0)
 				map->drop_snow(x, y, 0.20f);
 		}
 	}
@@ -67,9 +67,17 @@ void scenario_snow(Map * map)
 void scenario_rain_middle(Map * map)
 {
     int size = 10;
-    for (int x = 80 - size; x < 80 + size; x++)
-    for (int y = 60 - size; y < 60 + size; y++)
+	int px = 80, py = 60;
+    for (int x = px - size; x < px + size; x++)
+    for (int y = py - size; y < py + size; y++)
         map->drop_rain(x, y, 0.2f * (rand() % 100 == 0));
+
+	size = 6;
+	px = 130;
+	py = 60;
+	for (int x = px - size; x < px + size; x++)
+	for (int y = py - size; y < py + size; y++)
+		map->drop_rain(x, y, 0.2f * (rand() % 10 == 0));
 }
 
 void scenario_srilanka(Map * map)
@@ -108,7 +116,7 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 	srand(time(NULL));
 
-	CONF_NUM_CORES = std::thread::hardware_concurrency() - 1;
+	CONF_NUM_CORES = std::thread::hardware_concurrency();
     if (CONF_NUM_CORES <= 0)
         CONF_NUM_CORES = 1;
 	std::cout << "CONF_NUM_CORES = " << CONF_NUM_CORES << std::endl;

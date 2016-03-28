@@ -46,23 +46,11 @@ void display_iso(void)
 
 	Map cmap;
 	mtx.lock();
-	if (q.size() <= 0)
-	{
-		mtx.unlock();
-		std::cout << "no frame" << std::endl;
-		return ;
-	}
+	if (conf_skip_frames)
+		cmap = q.back();
 	else
-	{
 		cmap = q.front();
-
-		if (conf_skip_frames)
-			cmap = q.back();
-
-		if (!conf_pause)
-			q.pop();
-		mtx.unlock();
-	}
+	mtx.unlock();
 
 
 	static float hauteur_ref = -1.0f;

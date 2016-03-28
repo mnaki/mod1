@@ -44,10 +44,10 @@ void reshape(int w, int h)
 	glLoadIdentity();
 	gluPerspective(90.0f, w / h, 1.0f, h);
 	glMatrixMode(GL_MODELVIEW);
-	glRotatef(45.0f/4, -1.0f, 0.0f, 0.0f);
-	glTranslatef(0, 45.0f * 2.0f, 45 * -4.0f);
-	// glTranslatef(0, 0);
-	glRotatef(-50.0f, 45.0f*2, 0.0f, 0.0f);
+	glRotatef(45.0f * 1.5f, -1.0f, 0.0f, 0.0f);
+	glTranslatef(0, 45.0f * 4.0f, 45 * -2.0f);
+	glRotatef(-30.0f, 0, 0.0f, 0.0f);
+	glTranslatef(0.0f, 45.0f * 3.0f, 45.0f);
 }
 
 void display(void)
@@ -59,23 +59,11 @@ void display(void)
 
 	Map cmap;
 	mtx.lock();
-	if (q.size() <= 0)
-	{
-		mtx.unlock();
-		std::cout << "no frame" << std::endl;
-		return ;
-	}
+	if (conf_skip_frames)
+		cmap = q.back();
 	else
-	{
 		cmap = q.front();
-
-		if (conf_skip_frames)
-			cmap = q.back();
-
-		if (!conf_pause)
-			q.pop();
-		mtx.unlock();
-	}
+	mtx.unlock();
 
 	for (GLfloat x = 0; x < cmap.width - 1; x++)
 	{
@@ -99,7 +87,7 @@ void display(void)
 
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_POINT_SIZE);
-	glPointSize(1.0f);
+	glPointSize(2.0f);
 	glBegin(GL_POINTS);
     for (auto const & drop : cmap.rain_drops)
     {
@@ -117,8 +105,6 @@ void display(void)
                 // glBegin(GL_POINTS);
                 glColor4f( 0.0f, 0.25f, 1.0f, 0.5f);
                 glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width);
-                glColor4f( 0.0f, 1.0f, 1.0f, 0.5f);
-                glVertex3i(drop.x - cmap.width / 2, drop.y - cmap.height / 2, drop.altitude - cmap.width - drop.mass * 4.0f);
                 // glEnd();
             }
     }

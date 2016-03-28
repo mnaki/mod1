@@ -66,12 +66,12 @@ void scenario_snow(Map * map)
 
 void scenario_rain_middle(Map * map)
 {
-    int size = 20;
+    int size = 10;
 	int px = 100, py = 25;
     for (int x = px - size; x < px + size; x++)
     for (int y = py - size; y < py + size; y++)
         if (rand() % 10 == 0)
-			map->drop_rain(x, y, 1.5f);
+			map->drop_rain(x, y, 1.0f);
 
 }
 
@@ -213,7 +213,7 @@ int	main(int ac, char **av)
 
 					q.push(*map);
 				}
-				if (q.size() > 2)
+				if (q.size() > 1)
 				{
                     usleep(1000000/FPS);
                     idle();

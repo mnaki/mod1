@@ -146,7 +146,7 @@ int	main(int ac, char **av)
 			{
 				if (q.size() < RENDER_AHEAD)
 				{
-					if (pour_water && !vidange)
+					if (pour_water)
                     {
 						switch(map->scenario)
 						{
@@ -180,19 +180,11 @@ int	main(int ac, char **av)
 
                     if (vidange)
                     {
-                        static int deja_vidange = false;
-                        if (deja_vidange == false)
+                        for (int x = map->width * 0.3; x < map->width * 0.7; x++)
+                        for (int y = map->width * 0.3; y < map->height * 0.7; y++)
                         {
-                            auto ref = map->get_hauteur_max();
-                            for (int x = map->width * 0.2; x < map->width * 0.8; x++)
-                            for (int y = map->width * 0.2; y < map->height * 0.8; y++)
-                            {
-                                map->data[x][y].terrain_height = -20;
-                            }
-                            map->draw_cone(map->width / 2, map->height / 2, map->width * 0.2, ref * 150, true);
-                            std::cout << "vidange" << std::endl;
+                            map->data[x][y].water_level = map->data[x][y].water_level / 2;
                         }
-                        deja_vidange = true;
                     }
 
 					// bordures nulles

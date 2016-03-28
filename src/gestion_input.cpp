@@ -90,7 +90,7 @@ void	keyboard(unsigned char ch, int x, int y)
 			break;
         case 'v':
         case 'V':
-            vidange = true;
+            vidange = !vidange;
             break;
 		default:
 			break;

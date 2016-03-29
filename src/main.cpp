@@ -95,8 +95,8 @@ void scenario_riviere(Map * map)
 
 void idle()
 {
-	sched_yield();
-    sleep(0);
+	// sched_yield();
+    // sleep(0);
 }
 
 void glutTimer(int te)
@@ -116,8 +116,10 @@ int	main(int ac, char **av)
 	glutInit(&ac, av);
 	srand(time(NULL));
 
-	// CONF_NUM_CORES = std::thread::hardware_concurrency();
-    // if (CONF_NUM_CORES <= 0)
+	CONF_NUM_CORES = std::thread::hardware_concurrency() - 1;
+	if (CONF_NUM_CORES % 2 != 0)
+		CONF_NUM_CORES -= 1;
+    if (CONF_NUM_CORES <= 0)
         CONF_NUM_CORES = 1;
 	std::cout << "CONF_NUM_CORES = " << CONF_NUM_CORES << std::endl;
 
@@ -216,6 +218,8 @@ int	main(int ac, char **av)
 				}
 				else
 					mtx.unlock();
+				sched_yield();
+				sleep(0);
 			}
 		}
 		catch (std::exception & e)

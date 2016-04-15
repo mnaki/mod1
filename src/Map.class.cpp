@@ -213,12 +213,23 @@ void Map::elevate_rect(int x0, int y0, int x1, int y1, float value)
 	int width = x1 - x0;
 	int height = y1 - y0;
 	for (int x = 0 ; x < width ; x++)
-	for (int y = 0 ; y < height ; y++)
-		this->data[x+x0][y+y0].terrain_height = this->data[x+x0][y+y0].terrain_height + value;
+		for (int y = 0 ; y < height ; y++)
+			this->data[x+x0][y+y0].terrain_height = this->data[x+x0][y+y0].terrain_height + value;
 }
 
 void Map::draw_cone(int start_x, int start_y, int radius, int height, bool reverse)
 {
+	if (!(start_x >= this->width || start_x <= 0 || start_y >= this->width || start_y <= 0))
+	{
+		if (start_x - radius <= 0)
+			radius = start_x - 1;
+		if (start_y - radius <= 0)
+			radius = start_y - 1;
+		if (start_x + radius >= this->width)
+			radius = this->width - start_x - 1;
+		if (start_y + radius >= this->width)
+			radius = this->width - start_y - 1;
+	}
 	float r = radius;
 	for (float h = 0 ; h < height ; h += 1.0f)
 	{

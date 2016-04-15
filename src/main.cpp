@@ -49,8 +49,8 @@ void scenario_rain(Map * map)
 {
 	for (int x = 0; x < map->width ; x += 1) {
 		for (int y = 0; y < map->height ; y += 1) {
-			if (rand() % 5000 == 0)
-				map->drop_rain(x, y, 0.75f);
+			if (rand() % 10000 == 0)
+				map->drop_rain(x, y, 4.0f);
 		}
 	}
 }
@@ -131,6 +131,8 @@ int	main(int ac, char **av)
 	}
 
 	map = init_from_fichier(av[1]);
+	if (map == NULL)
+		exit(0);
 
 	// creation de la fenetre en fonction de la map
 	int w = 0, h = 0;
@@ -139,8 +141,8 @@ int	main(int ac, char **av)
 	glutInitDisplayMode(GLUT_DOUBLE);
 	glutInitWindowSize(w, h);
 	glutCreateWindow("Mod1");
-	glutReshapeFunc(reshape);
-	glutDisplayFunc(display);
+	glutReshapeFunc(reshape_iso);
+	glutDisplayFunc(display_iso);
 	glutMotionFunc(mouse_motion);
 	glutTimerFunc(1000 / FPS, glutTimer, 1);
 
